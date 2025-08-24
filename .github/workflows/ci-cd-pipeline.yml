@@ -21,6 +21,10 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements-dev.txt
+      - name: Set up GitHub Token for gha-templates access
+        run: |
+          echo "::add-mask::${{ secrets.GHA_TEMPLATES_ACCESS_TOKEN }}"
+          git config --global url."https://${{ secrets.GHA_TEMPLATES_ACCESS_TOKEN }}@github.com".insteadOf "https://github.com"
       - name: Run linters (black and ruff)
         run: |
           pre-commit run --all-files --color always
@@ -59,3 +63,5 @@ jobs:
         run: |
           pip install -r requirements-dev.txt
       - name: Deploy to production (example)
+        run: |
+          ./deploy.sh  # Replace with your deploy script if needed
