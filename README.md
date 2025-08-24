@@ -1,4 +1,4 @@
-# 🌱 Life Ops Scripts 
+# 🌱 Life Ops Scripts
 [![lint](https://github.com/zacharymplace/life-ops-scripts/actions/workflows/lint.yml/badge.svg?branch=main)](https://github.com/zacharymplace/life-ops-scripts/actions/workflows/lint.yml)
 [![python](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)
 [![license](https://img.shields.io/github/license/zacharymplace/life-ops-scripts)](LICENSE)
@@ -6,7 +6,7 @@
 ---
 
 ## 🔧 Purpose
-Automations for daily life — budgeting helpers, home integrations, and media utilities.  
+Automations for daily life — budgeting helpers, home integrations, and media utilities.
 The goal: reduce friction, save time, and make everyday systems more enjoyable.
 
 ---
@@ -14,7 +14,7 @@ The goal: reduce friction, save time, and make everyday systems more enjoyable.
 ## 🚀 Getting Started
 ```bash
 # (Optional) create a virtual environment
-python -m venv .venv && source .venv/bin/activate  
+python -m venv .venv && source .venv/bin/activate
 # Windows: .venv\Scripts\activate
 
 # install dependencies
@@ -79,3 +79,4 @@ This project is licensed under the terms of the MIT License
 © Z$ • Life Ops • Code × Clarity
 
 ---
+Testing CI/CD pipeline
