@@ -1,28 +1,32 @@
+
+# --- Standard ignores ---
 # General
-.DS_Store
-Thumbs.db
-*.log
-*.tmp
-*.swp
-.env
-.venv/
-__pycache__/
-*.pyc
-
-# Python
-dist/
-build/
-.eggs/
-*.egg-info/
-
-# Node
-node_modules/
-
 # Jupyter
-.ipynb_checkpoints/
-
-# VSCode
-.vscode/
-
+# Logs & outputs
+# Node
+# OS cruft
+# Python
 # Rollup outputs
+# VSCode
+# Virtual envs
+*.csv
+*.egg-info/
+*.log
+*.py[cod]
+*.pyc
+*.swp
+*.tmp
+.DS_Store
+.eggs/
+.env
+.env/
+.ipynb_checkpoints/
+.venv/
+.vscode/
+Thumbs.db
+__pycache__/
+build/
+dist/
+node_modules/
+out/
 out/*.csv
