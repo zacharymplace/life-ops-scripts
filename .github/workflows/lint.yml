@@ -3,3 +3,5 @@ on: [push, pull_request]
 jobs:
   call:
     uses: zacharymplace/gha-templates/.github/workflows/reusable-lint.yml@main
+    with:
+      python-versions: '["3.10","3.11"]'
