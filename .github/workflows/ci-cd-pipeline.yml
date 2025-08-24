@@ -3,10 +3,10 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - main
+      - main  # This ensures the workflow is triggered when changes are pushed to the main branch
   pull_request:
     branches:
-      - main
+      - main  # This triggers on PR to the main branch
 
 jobs:
   lint:
@@ -21,6 +21,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements-dev.txt
+          pip install pandas  # Install pandas explicitly
       - name: Run linters (black and ruff)
         run: |
           pre-commit run --all-files --color always
@@ -40,6 +41,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements-dev.txt
+          pip install pandas  # Ensure pandas is installed for tests
       - name: Run tests
         run: |
           pytest -q --disable-warnings
@@ -58,6 +60,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r requirements-dev.txt
+          pip install pandas  # Ensure pandas is installed during deployment
       - name: Deploy to production (example)
         run: |
           ./deploy.sh  # Replace with your deploy script if needed
