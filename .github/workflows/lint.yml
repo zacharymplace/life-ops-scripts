@@ -4,6 +4,4 @@ jobs:
   call:
     uses: zacharymplace/gha-templates/.github/workflows/reusable-lint.yml@main
     with:
-      python-versions: '["3.10", "3.11"]'
-    secrets:
-      GHA_TEMPLATES_ACCESS_TOKEN: ${{ secrets.GHA_TEMPLATES_ACCESS_TOKEN }}
+      python-versions: '["3.10","3.11"]'
