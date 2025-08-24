@@ -1,4 +1,4 @@
-# life-ops-scripts
+# Life ops scripts [![lint](https://github.com/zacharymplace/life-ops-scripts/actions/workflows/lint.yml/badge.svg?branch=main)](https://github.com/zacharymplace/life-ops-scripts/actions/workflows/lint.yml)
 
 **Purpose**: Automations for daily life: budgeting helpers, home integrations, media utilities.
 
