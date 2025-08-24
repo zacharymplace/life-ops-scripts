@@ -1,0 +1,5 @@
+date,account,description,category,amount
+2025-08-01,Checking 1234,Payroll,Income:Salary,2500.0
+2025-08-02,Checking 1234,Groceries,Food:Groceries,-124.73
+2025-08-03,Checking 1234,Rent,Housing:Rent,-1500.0
+2025-08-04,Checking 1234,Coffee,Food:Dining,-4.5

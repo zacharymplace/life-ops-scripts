@@ -1,24 +1,18 @@
 """
 script: cash_flow_rollup.py
-purpose: Aggregate daily inflows/outflows and compute running cash position.
+purpose: Aggregate inflows/outflows and compute running cash position
+         at daily, weekly, or monthly frequency.
 
 usage:
   python scripts/python/finance/cash_flow_rollup.py \
     --infile ./out/tiller_normalized.csv \
     --opening-cash 125000 \
+    --freq weekly \
     --outdir ./out
-
-inputs:
-  --infile        normalized CSV with columns [date, account, description, category, amount]
-  --opening-cash  starting balance for running position
-  --outdir        where to write rollups
-
-outputs:
-  out/cash_daily_rollup.csv  (date, inflow, outflow, net, cash_position)
 
 audit:
   owner: Z$ | Life Ops
-  version: 0.1.0
+  version: 0.2.1
   last_updated: 2025-08-24
 """
 
@@ -30,10 +24,11 @@ import pandas as pd
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(
-        description="Compute daily cash rollup from normalized transactions CSV."
+        description="Compute cash rollup from normalized transactions CSV."
     )
     p.add_argument("--infile", type=pathlib.Path, required=True)
     p.add_argument("--opening-cash", type=float, required=True)
+    p.add_argument("--freq", choices=["daily", "weekly", "monthly"], default="daily")
     p.add_argument("--outdir", type=pathlib.Path, default=pathlib.Path("./out"))
     return p.parse_args()
 
@@ -43,21 +38,26 @@ def main() -> int:
     args.outdir.mkdir(parents=True, exist_ok=True)
 
     df = pd.read_csv(args.infile)
-    # Types
-    df["date"] = pd.to_datetime(df["date"], errors="coerce").dt.date
+    df["date"] = pd.to_datetime(df["date"], errors="coerce")
     df = df.dropna(subset=["date"]).copy()
     df["amount"] = pd.to_numeric(df["amount"], errors="coerce").fillna(0.0)
 
-    # Group & roll
-    g = df.groupby("date", sort=True)["amount"].sum()
-    daily = g.rename("net").reset_index()
-    daily["inflow"] = daily["net"].where(daily["net"] > 0, 0.0)
-    daily["outflow"] = daily["net"].where(daily["net"] < 0, 0.0).abs()
-    daily["cash_position"] = args.opening_cash + daily["net"].cumsum()
-    daily = daily[["date", "inflow", "outflow", "net", "cash_position"]]
+    if args.freq == "daily":
+        g = df.groupby(df["date"].dt.date)["amount"].sum()
+    elif args.freq == "weekly":
+        g = df.groupby(pd.Grouper(key="date", freq="W-MON"))["amount"].sum()
+    elif args.freq == "monthly":
+        g = df.groupby(pd.Grouper(key="date", freq="ME"))["amount"].sum()
 
-    outpath = args.outdir / "cash_daily_rollup.csv"
-    daily.to_csv(outpath, index=False)
+    roll = g.rename("net").reset_index()
+    roll["inflow"] = roll["net"].where(roll["net"] > 0, 0.0)
+    roll["outflow"] = roll["net"].where(roll["net"] < 0, 0.0).abs()
+    roll["cash_position"] = args.opening_cash + roll["net"].cumsum()
+    roll = roll[["date", "inflow", "outflow", "net", "cash_position"]]
+
+    suffix = args.freq
+    outpath = args.outdir / f"cash_{suffix}_rollup.csv"
+    roll.to_csv(outpath, index=False)
     print(f"[ok] wrote {outpath}")
     return 0
 
