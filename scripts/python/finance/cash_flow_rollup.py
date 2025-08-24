@@ -12,7 +12,7 @@ usage:
 
 audit:
   owner: Z$ | Life Ops
-  version: 0.2.1
+  version: 0.3.0
   last_updated: 2025-08-24
 """
 
@@ -38,6 +38,13 @@ def main() -> int:
     args.outdir.mkdir(parents=True, exist_ok=True)
 
     df = pd.read_csv(args.infile)
+
+    # Required columns guard
+    required = {"date", "amount"}
+    missing = required - set(df.columns)
+    if missing:
+        raise SystemExit(f"[error] missing required columns: {sorted(missing)}")
+
     df["date"] = pd.to_datetime(df["date"], errors="coerce")
     df = df.dropna(subset=["date"]).copy()
     df["amount"] = pd.to_numeric(df["amount"], errors="coerce").fillna(0.0)
@@ -55,10 +62,13 @@ def main() -> int:
     roll["cash_position"] = args.opening_cash + roll["net"].cumsum()
     roll = roll[["date", "inflow", "outflow", "net", "cash_position"]]
 
-    suffix = args.freq
-    outpath = args.outdir / f"cash_{suffix}_rollup.csv"
+    outpath = args.outdir / f"cash_{args.freq}_rollup.csv"
     roll.to_csv(outpath, index=False)
     print(f"[ok] wrote {outpath}")
+    print(
+        f"[ok] rows={len(roll)} | inflow={roll['inflow'].sum():.2f} "
+        f"| outflow={roll['outflow'].sum():.2f} | cash_end={roll['cash_position'].iloc[-1]:.2f}"
+    )
     return 0
 
 
