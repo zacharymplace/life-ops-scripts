@@ -38,4 +38,3 @@ life-ops-scripts/
 - [ ] Define first 2–3 scripts or notebooks
 - [ ] Add data samples and tests
 - [ ] Wire CI (ruff/black or flake8 + pytest)
-
