@@ -2,3 +2,5 @@
 # examples:
 # pandas
 # pyyaml
+pandas>=2.2
+python-dateutil>=2.9
