@@ -1,20 +1,29 @@
 ---
 name: Bug report
-about: Create a report to help improve the repo
-title: "[BUG] "
-labels: ["bug"]
+about: Something isn’t working as expected
+labels: bug
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+## Describe the bug
+<!-- Clear, concise description -->
 
-**Steps to Reproduce**
+## To Reproduce
+Steps:
 1.
 2.
 3.
 
-**Expected behavior**
+## Expected behavior
+<!-- What should happen? -->
 
-**Environment**
+## Actual behavior / logs
+<!-- What happened? Include error text or screenshots -->
 
-**Additional context**
+## Env
+- OS:
+- Python: 3.11 / 3.12 (which?)
+- Package versions (if relevant):
+
+## Additional context
+<!-- Anything else helpful -->
+
