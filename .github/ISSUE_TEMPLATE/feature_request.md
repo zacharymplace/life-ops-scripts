@@ -1,14 +1,22 @@
 ---
 name: Feature request
-about: Suggest an idea
-title: "[FEAT] "
-labels: ["enhancement"]
+about: Propose an enhancement or new script
+labels: enhancement
 ---
 
-**Problem / Opportunity**
+## Problem / Use case
+<!-- What pain are we solving? -->
 
-**Proposed Solution**
+## Proposed solution
+<!-- Outline the idea: flags, inputs/outputs, example usage -->
 
-**Alternatives**
+## Alternatives considered
+<!-- Any other approaches? -->
 
-**Definition of Done**
+## Impact
+- Scope:
+- Risk:
+- Est. effort:
+
+## Additional context
+<!-- Links, references, mock CLI, etc. -->
