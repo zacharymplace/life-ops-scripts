@@ -14,6 +14,7 @@ labels: enhancement
 <!-- Any other approaches? -->
 
 ## Impact
+
 - Scope:
 - Risk:
 - Est. effort:

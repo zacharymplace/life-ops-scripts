@@ -1,9 +1,11 @@
 # 🔒 Security Policy
 
 ## Supported Versions
+
 We maintain the latest `main` branch only. Older versions are not patched.
 
 ## Reporting a Vulnerability
+
 If you discover a security issue or unsafe behavior in a script:
 
 1. **Do not open a public issue.**

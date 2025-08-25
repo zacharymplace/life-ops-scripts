@@ -16,18 +16,32 @@
 </p>
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [🔧 Purpose](#-purpose)
+- [🚀 Getting Started](#-getting-started)
+- [📂 Repo Layout](#-repo-layout)
+- [🧭 Governance](#%F0%9F%A7%AD-governance)
+- [🗺 Roadmap](#%F0%9F%97%BA-roadmap)
+- [🤝 Contributing](#-contributing)
+- [🚀 Releasing](#-releasing)
+  - [Steps](#steps)
+- [🔗 Links](#-links)
+- [📜 License](#-license)
+
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 ---
 
 ## 🔧 Purpose
+
 Automations for daily life — budgeting helpers, home integrations, and media utilities.
 The goal: reduce friction, save time, and make everyday systems more enjoyable.
-
 
 ---
 
 ## 🚀 Getting Started
+
 ```bash
 # (Optional) create a virtual environment
 python -m venv .venv && source .venv/bin/activate
@@ -95,16 +109,20 @@ Tagged releases are built and published automatically by CI.
 ### Steps
 
 1. Make sure you’re on `main` and up to date:
+
    ```bash
    git checkout main
    git pull
    ```
+
 2. Tag and push:
+
    ```bash
    # bump version
    git tag v0.1.2
    git push origin v0.1.2
    ```
+
 3. CI/CD will
    - Run `deploy.sh` to package `scripts/`, `docs/`, and metadata
    - Upload `life-ops-scripts-<tag>.zip` + `.sha256` to the **Releases** page
@@ -113,8 +131,9 @@ Tagged releases are built and published automatically by CI.
 ---
 
 ## 🔗 Links
-- **Releases:** https://github.com/zacharymplace/life-ops-scripts/releases
-- **Actions (CI):** https://github.com/zacharymplace/life-ops-scripts/actions
+
+- **Releases:** <https://github.com/zacharymplace/life-ops-scripts/releases>
+- **Actions (CI):** <https://github.com/zacharymplace/life-ops-scripts/actions>
 
 ---
 

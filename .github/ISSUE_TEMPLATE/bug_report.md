@@ -8,6 +8,7 @@ labels: bug
 <!-- Clear, concise description -->
 
 ## To Reproduce
+
 Steps:
 1.
 2.
@@ -20,6 +21,7 @@ Steps:
 <!-- What happened? Include error text or screenshots -->
 
 ## Env
+
 - OS:
 - Python: 3.11 / 3.12 (which?)
 - Package versions (if relevant):
