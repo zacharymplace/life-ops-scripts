@@ -43,7 +43,7 @@ pip install -r requirements-dev.txt
 
 ## 📂 Repo Layout
 
-```
+```text
 ├─ README.md
 ├─ scripts/
 │  ├─ python/        → core Python scripts
