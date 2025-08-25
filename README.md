@@ -1,5 +1,5 @@
 # 🌱 Life Ops Scripts
-[![CI/CD](https://github.com/zacharymplace/life-ops-scripts/actions/workflows/ci-cd-pipeline.yml/badge.svg?branch=main)](https://github.com/zacharymplace/life-ops-scripts/actions/workflows/ci-cd-pipeline.yml)
+[![CI](https://github.com/zacharymplace/life-ops-scripts/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/zacharymplace/life-ops-scripts/actions/workflows/ci.yml)
 [![Python](https://img.shields.io/badge/python-3.11%20|%203.12-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/github/license/zacharymplace/life-ops-scripts)](LICENSE)
 
@@ -17,15 +17,17 @@ The goal: reduce friction, save time, and make everyday systems more enjoyable.
 python -m venv .venv && source .venv/bin/activate
 # Windows: .venv\Scripts\activate
 
-# install dependencies
-pip install -r requirements.txt
+# install dev dependencies
+pip install -r requirements-dev.txt
+# (optional if you add a runtime requirements.txt later)
+# pip install -r requirements.txt
 ```
 
 ---
 
 ## 📂 Repo Layout
 
-```life-ops-scripts/
+```
 ├─ README.md
 ├─ scripts/
 │  ├─ python/        → core Python scripts
@@ -56,7 +58,7 @@ pip install -r requirements.txt
 ## 🗺 Roadmap
 
 - [ ] Define first 2-3 scripts or notebooks (e.g., cash flow, hosting helper)
-- [ ] Add data smaples + tests for reproducibility
+- [ ] Add data samples + tests for reproducibility
 - [ ] Wire CI (ruff + pytest)
 - [ ] Draft contribution guidelines
 - [ ] Publish first release tag (v0.1.0)
@@ -80,6 +82,7 @@ Tagged releases are built and published automatically by CI.
    ```bash
    git checkout main
    git pull
+   ```
 2. Tag and push:
    ```bash
    # bump version
@@ -102,4 +105,3 @@ This project is licensed under the terms of the MIT License
 © Z$ • Life Ops • Code × Clarity
 
 ---
-Testing CI/CD pipeline
