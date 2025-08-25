@@ -70,6 +70,29 @@ See `CONTRIBUTING.md`.
 
 ---
 
+## 🚀 Releasing
+
+Tagged releases are built and published automatically by CI.
+
+### Steps
+
+1. Make sure you’re on `main` and up to date:
+   ```bash
+   git checkout main
+   git pull
+2. Tag and push:
+   ```bash
+   # bump version
+   git tag v0.1.2
+   git push origin v0.1.2
+   ```
+3. CI/CD will
+   - Run `deploy.sh` to package `scripts/`, `docs/`, and metadata
+   - Upload `life-ops-scripts-<tag>.zip` + `.sha256` to the **Releases** page
+   - No-op safely if not on a tag
+
+---
+
 ## 📜 License
 
 This project is licensed under the terms of the MIT License
