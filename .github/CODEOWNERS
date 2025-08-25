@@ -1,1 +1,4 @@
-*   @zacharymplace
+# CODEOWNERS for life-ops-scripts
+# All files default to Z$
+
+* @zacharymplace
