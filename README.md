@@ -21,6 +21,7 @@
 
 - [🔧 Purpose](#-purpose)
 - [🚀 Getting Started](#-getting-started)
+  - [Cash Flow Rollup (weekly/monthly)](#cash-flow-rollup-weeklymonthly)
 - [📂 Repo Layout](#-repo-layout)
 - [🧭 Governance](#%F0%9F%A7%AD-governance)
 - [🗺 Roadmap](#%F0%9F%97%BA-roadmap)
@@ -53,6 +54,20 @@ pip install -r requirements-dev.txt
 # (optional if you add a runtime requirements.txt later)
 # pip install -r requirements.txt
 ```
+
+### Cash Flow Rollup (weekly/monthly)
+
+```bash
+python scripts/python/finance/cash_flow_rollup.py \
+  --infile out/tiller_normalized.csv \
+  --opening-cash 100000 \
+  --freq monthly \
+  --outdir out
+```
+
+Outputs:
+
+- `out/cas_monthly_rollup.csv` (or `cash_weekly_rollup.csv`) with inflow, outflow, net and cumulative cash.
 
 ---
 

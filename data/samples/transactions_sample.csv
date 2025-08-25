@@ -1,0 +1,7 @@
+txn_date,amount,category,memo
+2025-01-01,2000,Income,Paycheck
+2025-01-05,-150,Food,Groceries
+2025-01-10,-60,Transport,Gas
+2025-01-15,-200,Entertainment,Concert
+2025-01-20,2000,Income,Paycheck
+2025-01-25,-800,Housing,Rent

@@ -31,3 +31,8 @@ dist/
 node_modules/
 out/
 out/*.csv
+
+# keep sample data
+!data/
+!data/samples/
+!data/samples/*.csv
