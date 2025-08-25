@@ -16,6 +16,19 @@ The format is based on **Keep a Changelog**, and this project adheres to **Seman
 
 ---
 
+## [v0.1.2] - 2025-08-24
+### Added
+- CI: OS/Python matrix (ubuntu & windows; 3.11 & 3.12)
+- Codecov integration + coverage upload
+
+### Changed
+- Pre-commit: explicitly configures markdownlint; uses repo config in CI
+
+### Fixed
+- markdownlint MD024 false-positives for Keep-a-Changelog (allow different nesting)
+
+---
+
 ## [v0.1.1] - 2025-08-24
 ### Added
 - **cash_flow_rollup.py** (weekly/monthly) with sample data and a smoke test
@@ -42,6 +55,7 @@ The format is based on **Keep a Changelog**, and this project adheres to **Seman
 ---
 
 <!-- Links -->
-[Unreleased]: https://github.com/zacharymplace/life-ops-scripts/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/zacharymplace/life-ops-scripts/compare/v0.1.2...HEAD
+[v0.1.2]: https://github.com/zacharymplace/life-ops-scripts/compare/v0.1.1...v0.1.2
 [v0.1.1]: https://github.com/zacharymplace/life-ops-scripts/compare/v0.1.0...v0.1.1
 [v0.1.0]: https://github.com/zacharymplace/life-ops-scripts/releases/tag/v0.1.0
