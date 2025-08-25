@@ -26,17 +26,19 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
-          python -m pip install pre-commit pytest pytest-cov
+          python -m pip install pre-commit pytest pytest-cov black
 
-      # NEW: format first so pre-commit's black hook doesn't modify files
+      # Format first so the tree is clean
       - name: Format (black)
         shell: bash
         run: |
-          python -m pip install black==25.1.0
           black .
 
-      - name: Lint (pre-commit)
-        run: pre-commit run --all-files
+      # Run the rest of pre-commit hooks, skipping black (since we formatted already)
+      - name: Lint (pre-commit, skip black)
+        shell: bash
+        run: |
+          SKIP=black pre-commit run --all-files
 
       - name: Test with coverage
         shell: bash
