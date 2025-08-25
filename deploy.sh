@@ -41,4 +41,3 @@ shasum -a 256 "${ZIP}" > "${SHA}"
 
 echo "[deploy] built artifacts:"
 ls -lh "${ZIP}" "${SHA}"
-

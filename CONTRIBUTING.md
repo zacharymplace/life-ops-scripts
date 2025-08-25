@@ -6,6 +6,7 @@ This is primarily a personal project, but contributions, suggestions, and forks 
 ---
 
 ## 🔄 Workflow
+
 - Branch from `dev` (e.g., `feat/short-description`).
 - Open a Pull Request targeting `dev`.
 - Squash + merge once approved.
@@ -14,6 +15,7 @@ This is primarily a personal project, but contributions, suggestions, and forks 
 ---
 
 ## 📌 Standards
+
 - Add or update **README sections** when you change behavior.
 - Place tests in `tests/` — even lightweight coverage is better than none.
 - Keep scripts **idempotent and safe** (dry-run flags, backups).
@@ -22,6 +24,7 @@ This is primarily a personal project, but contributions, suggestions, and forks 
 ---
 
 ## 🧹 Code Style
+
 - **Python 3.11+**
 - Lint/format with [ruff](https://docs.astral.sh/ruff/) + [black](https://black.readthedocs.io/en/stable/).
 - Commit messages: short + imperative (e.g., `feat: add cash flow summary script`).
@@ -30,6 +33,7 @@ This is primarily a personal project, but contributions, suggestions, and forks 
 ---
 
 ## 🚀 Release
+
 - **Semantic versioning**: `MAJOR.MINOR.PATCH`
 - Update **CHANGELOG.md** with notable changes.
 - Tag releases from `main` once promoted.
@@ -37,6 +41,7 @@ This is primarily a personal project, but contributions, suggestions, and forks 
 ---
 
 ## 📜 Notes
+
 - This repo evolves organically — not every idea will be merged, but discussion is welcome.
 - For big ideas, open an **issue** first to align.
 
