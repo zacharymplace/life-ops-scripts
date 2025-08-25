@@ -28,6 +28,11 @@ jobs:
           if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
           python -m pip install pre-commit pytest pytest-cov
 
+      - name: Format (black)
+        run: |
+          python -m pip install black
+          black .
+
       - name: Lint (pre-commit)
         run: pre-commit run --all-files
 
