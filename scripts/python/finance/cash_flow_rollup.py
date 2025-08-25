@@ -69,7 +69,7 @@ def rollup(
     df: pd.DataFrame, freq: str, date_col: str, amount_col: str, opening_cash: float
 ) -> pd.DataFrame:
     if freq == "monthly":
-        grouper = pd.Grouper(key=date_col, freq="M")
+        grouper = pd.Grouper(key=date_col, freq="ME")  # month end
         label_col = "label"
         label_period = "M"
     else:
