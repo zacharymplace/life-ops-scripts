@@ -5,36 +5,35 @@ on:
       - 'v*'   # e.g., v0.1.0
 
 permissions:
-  contents: write   # needed to create release & upload assets
+  contents: write   # needed to create/update release & upload assets
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
       - name: Install dev deps
         run: |
           python -m pip install --upgrade pip
           if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+
       - name: Build artifacts
         run: |
           chmod +x ./deploy.sh
           ./deploy.sh
-      - name: Create GitHub release
-        uses: softprops/action-gh-release@v2
+
+      # Create or update the release and upload artifacts
+      - name: Create/Update GitHub Release
+        uses: ncipollo/release-action@v1
         with:
-          tag_name: ${{ github.ref_name }}
+          tag: ${{ github.ref_name }}
           name: ${{ github.ref_name }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Upload artifacts
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            out/*.zip
-            out/*.sha256
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          allowUpdates: true
+          artifacts: "out/*.zip,out/*.sha256"
+          artifactErrorsFailBuild: true
+          token: ${{ secrets.GITHUB_TOKEN }}
