@@ -50,7 +50,7 @@ pip install -r requirements-dev.txt
 
 - **Owner**: Z$
 - **Review Cycle**: Quarterly
-- **Version**: v0.1.0
+- **Version**: v0.1.1
 - **Audit Notes**: Track design decisions in `docs/decisions/`
 
 ---
@@ -61,7 +61,7 @@ pip install -r requirements-dev.txt
 - [ ] Add data samples + tests for reproducibility
 - [ ] Wire CI (ruff + pytest)
 - [ ] Draft contribution guidelines
-- [ ] Publish first release tag (v0.1.0)
+- [ ] Publish first release tag (v0.1.1)
 
 ---
 
