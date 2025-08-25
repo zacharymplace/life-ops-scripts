@@ -1,7 +1,7 @@
 # 🌱 Life Ops Scripts
-[![lint](https://github.com/zacharymplace/life-ops-scripts/actions/workflows/lint.yml/badge.svg?branch=main)](https://github.com/zacharymplace/life-ops-scripts/actions/workflows/lint.yml)
-[![python](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/)
-[![license](https://img.shields.io/github/license/zacharymplace/life-ops-scripts)](LICENSE)
+[![CI/CD](https://github.com/zacharymplace/life-ops-scripts/actions/workflows/ci-cd-pipeline.yml/badge.svg?branch=main)](https://github.com/zacharymplace/life-ops-scripts/actions/workflows/ci-cd-pipeline.yml)
+[![Python](https://img.shields.io/badge/python-3.11%20|%203.12-blue.svg)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/github/license/zacharymplace/life-ops-scripts)](LICENSE)
 
 ---
 
