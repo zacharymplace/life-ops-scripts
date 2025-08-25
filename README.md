@@ -1,4 +1,5 @@
-# 🌱 Life Ops Scripts
+<h1 align="center">🌱 Life Ops Scripts</h1>
+
 <p align="center">
   <a href="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/ci.yml">
     <img src="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI" />
@@ -14,11 +15,15 @@
   </a>
 </p>
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ---
 
 ## 🔧 Purpose
 Automations for daily life — budgeting helpers, home integrations, and media utilities.
 The goal: reduce friction, save time, and make everyday systems more enjoyable.
+
 
 ---
 
@@ -61,7 +66,7 @@ pip install -r requirements-dev.txt
 
 - **Owner**: Z$
 - **Review Cycle**: Quarterly
-- **Version**: v0.1.1
+- **Version**: see latest → Releases badge above
 - **Audit Notes**: Track design decisions in `docs/decisions/`
 
 ---
@@ -72,7 +77,7 @@ pip install -r requirements-dev.txt
 - [ ] Add data samples + tests for reproducibility
 - [ ] Wire CI (ruff + pytest)
 - [ ] Draft contribution guidelines
-- [ ] Publish first release tag (v0.1.1)
+- [ ] Publish new tagged releases regularly
 
 ---
 
@@ -107,9 +112,15 @@ Tagged releases are built and published automatically by CI.
 
 ---
 
+## 🔗 Links
+- **Releases:** https://github.com/zacharymplace/life-ops-scripts/releases
+- **Actions (CI):** https://github.com/zacharymplace/life-ops-scripts/actions
+
+---
+
 ## 📜 License
 
-This project is licensed under the terms of the MIT License
+This project is licensed under the terms of the [MIT License](LICENSE).
 
 ---
 
