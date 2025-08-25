@@ -4,4 +4,4 @@ jobs:
   call:
     uses: zacharymplace/gha-templates/.github/workflows/reusable-lint.yml@main
     with:
-      python-versions: '["3.10","3.11"]'
+      python-versions: '["3.11","3.12"]'
