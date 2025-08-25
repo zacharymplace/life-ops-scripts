@@ -1,7 +1,18 @@
 # 🌱 Life Ops Scripts
-[![CI](https://github.com/zacharymplace/life-ops-scripts/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/zacharymplace/life-ops-scripts/actions/workflows/ci.yml)
-[![Python](https://img.shields.io/badge/python-3.11%20|%203.12-blue.svg)](https://www.python.org/)
-[![License: MIT](https://img.shields.io/github/license/zacharymplace/life-ops-scripts)](LICENSE)
+<p align="center">
+  <a href="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/ci.yml">
+    <img src="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI" />
+  </a>
+  <a href="https://github.com/zacharymplace/life-ops-scripts/releases">
+    <img src="https://img.shields.io/github/v/release/zacharymplace/life-ops-scripts" alt="Release" />
+  </a>
+  <a href="https://www.python.org/">
+    <img src="https://img.shields.io/badge/python-3.11%20|%203.12-blue.svg" alt="Python" />
+  </a>
+  <a href="LICENSE">
+    <img src="https://img.shields.io/github/license/zacharymplace/life-ops-scripts" alt="License: MIT" />
+  </a>
+</p>
 
 ---
 
