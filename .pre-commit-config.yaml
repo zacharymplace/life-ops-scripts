@@ -20,7 +20,13 @@ repos:
   rev: v0.45.0
   hooks:
     - id: markdownlint
-      args: ["--fix"]
+      args:
+        - "--fix"
+        - "--config"
+        - ".markdownlint.json"
+        - "--disable"
+        - "MD024"
+
 
 - repo: https://github.com/thlorenz/doctoc
   rev: v2.2.0
