@@ -1,3 +1,4 @@
+
 <h1 align="center">🌱 Life Ops Scripts</h1>
 
 <p align="center">
@@ -82,6 +83,7 @@ pip install -r requirements-dev.txt
 - **Review Cycle**: Quarterly
 - **Version**: see latest → Releases badge above
 - **Audit Notes**: Track design decisions in `docs/decisions/`
+- **Maintainers Guide**: see [docs/MAINTAINERS.md](docs/MAINTAINERS.md) for governance, PR, and release checklists
 
 ---
 
