@@ -16,6 +16,18 @@ The format is based on **Keep a Changelog**, and this project adheres to **Seman
 
 ---
 
+## [v0.1.3] - YYYY-MM-DD
+### Added
+- (to be filled at release time)
+
+### Changed
+- (to be filled at release time)
+
+### Fixed
+- (to be filled at release time)
+
+---
+
 ## [v0.1.2] - 2025-08-24
 ### Added
 - CI: OS/Python matrix (ubuntu & windows; 3.11 & 3.12)
@@ -55,7 +67,8 @@ The format is based on **Keep a Changelog**, and this project adheres to **Seman
 ---
 
 <!-- Links -->
-[Unreleased]: https://github.com/zacharymplace/life-ops-scripts/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/zacharymplace/life-ops-scripts/compare/v0.1.3...HEAD
+[v0.1.3]: https://github.com/zacharymplace/life-ops-scripts/compare/v0.1.2...v0.1.3
 [v0.1.2]: https://github.com/zacharymplace/life-ops-scripts/compare/v0.1.1...v0.1.2
 [v0.1.1]: https://github.com/zacharymplace/life-ops-scripts/compare/v0.1.0...v0.1.1
 [v0.1.0]: https://github.com/zacharymplace/life-ops-scripts/releases/tag/v0.1.0
