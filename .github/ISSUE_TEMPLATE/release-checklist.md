@@ -6,7 +6,7 @@ labels: release
 assignees: zacharymplace
 ---
 
-# 🚀 Release Checklist
+## 🚀 Release Checklist
 
 ## Pre-Release
 - [ ] Update `CHANGELOG.md` with version and date
