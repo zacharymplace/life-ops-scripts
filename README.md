@@ -1,9 +1,11 @@
-
 <h1 align="center">🌱 Life Ops Scripts</h1>
 
 <p align="center">
   <a href="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/ci.yml">
     <img src="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI" />
+  </a>
+  <a href="https://codecov.io/gh/zacharymplace/life-ops-scripts">
+    <img src="https://codecov.io/gh/zacharymplace/life-ops-scripts/branch/main/graph/badge.svg" alt="Coverage" />
   </a>
   <a href="https://github.com/zacharymplace/life-ops-scripts/releases">
     <img src="https://img.shields.io/github/v/release/zacharymplace/life-ops-scripts" alt="Release" />
@@ -15,6 +17,7 @@
     <img src="https://img.shields.io/github/license/zacharymplace/life-ops-scripts" alt="License: MIT" />
   </a>
 </p>
+
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
