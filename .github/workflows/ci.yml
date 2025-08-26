@@ -17,28 +17,49 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+          cache: 'pip'
+          cache-dependency-path: |
+            requirements-dev.txt
+            requirements.txt
 
-      - name: Install dev deps
+      - name: Install deps
         shell: bash
         run: |
           python -m pip install --upgrade pip
           if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
-          python -m pip install pre-commit pytest pytest-cov
+          python -m pip install pytest
+          # Ubuntu: add tooling for lint/coverage
+          if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
+            python -m pip install pre-commit pytest-cov black codecov
+          fi
+
+      # ---- Ubuntu-only fixers ----
+      - name: Format (black)
+        if: matrix.os == 'ubuntu-latest'
+        shell: bash
+        run: |
+          black .
 
       - name: Update README TOC (doctoc)
+        if: matrix.os == 'ubuntu-latest'
         shell: bash
         run: |
           pre-commit run doctoc --all-files || true
 
-      - name: Lint (pre-commit)
+      # ---- Ubuntu-only lint (skip the fixers that already modified files) ----
+      - name: Lint (pre-commit, skip black & doctoc)
+        if: matrix.os == 'ubuntu-latest'
         shell: bash
         run: |
           SKIP=black,doctoc pre-commit run --all-files
 
-      - name: Test with coverage
+      # ---- Tests ----
+      - name: Test with coverage (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
         shell: bash
         run: |
           pytest -q --disable-warnings \
@@ -46,24 +67,32 @@ jobs:
             --cov-report=xml:coverage.xml \
             --cov-report=term-missing
 
+      - name: Test (Windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          python -m pytest -q --disable-warnings
+
+      # ---- Coverage upload (Ubuntu only) ----
       - name: Ensure coverage file exists
-        if: ${{ always() }}
+        if: matrix.os == 'ubuntu-latest' && always()
         shell: bash
         run: |
           if [ ! -f coverage.xml ]; then echo "<coverage></coverage>" > coverage.xml; fi
 
       - name: Upload coverage to Codecov
+        if: matrix.os == 'ubuntu-latest'
         uses: codecov/codecov-action@v4
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}   # omit for public repos
+          token: ${{ secrets.CODECOV_TOKEN }}   # omit if public
           files: ./coverage.xml
-          flags: ${{ matrix.os }}-py${{ matrix.python-version }}
+          flags: ubuntu-py${{ matrix.python-version }}
           fail_ci_if_error: false
 
-      - name: Upload coverage artifact (for debugging)
-        if: ${{ always() }}
+      - name: Upload coverage artifact
+        if: matrix.os == 'ubuntu-latest' && always()
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-${{ matrix.os }}-py${{ matrix.python-version }}
+          name: coverage-ubuntu-py${{ matrix.python-version }}
           path: ./coverage.xml
           if-no-files-found: warn
+

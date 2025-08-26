@@ -58,11 +58,23 @@ pip install -r requirements-dev.txt
 # pip install -r requirements.txt
 ```
 
+### Normalize Tiller CSV (to `date,account,description,category,amount`)
+
+```bash
+python scripts/python/finance/normalize_tiller_csv.py \
+  --infile data/samples/transactions_sample.csv \
+  --outdir out
+```
+
+Outputs: `out/tiller_normalized.csv`
+
 ### Cash Flow Rollup (weekly/monthly)
 
 ```bash
 python scripts/python/finance/cash_flow_rollup.py \
   --infile out/tiller_normalized.csv \
+  --date-col date \
+  --amount-col amount \
   --opening-cash 100000 \
   --freq monthly \
   --outdir out
@@ -70,7 +82,7 @@ python scripts/python/finance/cash_flow_rollup.py \
 
 Outputs:
 
-- `out/cas_monthly_rollup.csv` (or `cash_weekly_rollup.csv`) with inflow, outflow, net and cumulative cash.
+- `out/cash_monthly_rollup.csv` (or `cash_weekly_rollup.csv`) with inflow, outflow, net, and cumulative cash.
 
 ---
 

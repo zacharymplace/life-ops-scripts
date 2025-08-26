@@ -65,46 +65,35 @@ def read_transactions(
     return df.sort_values(date_col)
 
 
-def rollup(
-    df: pd.DataFrame, freq: str, date_col: str, amount_col: str, opening_cash: float
-) -> pd.DataFrame:
+def rollup(df: pd.DataFrame, freq: str, date_col: str, amount_col: str, opening_cash: float) -> pd.DataFrame:
     if freq == "monthly":
-        grouper = pd.Grouper(key=date_col, freq="ME")  # month end
-        label_col = "label"
-        label_period = "M"
+        # Month end grouping
+        g = df.groupby(pd.Grouper(key=date_col, freq="ME"))
+        out = g[amount_col].sum().reset_index()
+        out.rename(columns={amount_col: "net", date_col: "period_end"}, inplace=True)
+        out["period_start"] = out["period_end"].dt.to_period("M").dt.start_time
+        out["label"] = out["period_start"].dt.to_period("M").astype(str)
     else:
-        # Weekly rollup anchored to Monday for stability
-        grouper = pd.Grouper(key=date_col, freq="W-MON")
-        label_col = "label"
-        label_period = "W-MON"
+        # Week starts Monday, ends Sunday -> group by weeks ending Sunday
+        g = df.groupby(pd.Grouper(key=date_col, freq="W-SUN"))
+        out = g[amount_col].sum().reset_index()
+        out.rename(columns={amount_col: "net", date_col: "period_end"}, inplace=True)
+        out["period_start"] = out["period_end"] - pd.Timedelta(days=6)
+        # Human-readable label (week start date)
+        out["label"] = out["period_start"].dt.strftime("%Y-%m-%d")
 
-    g = df.groupby(grouper)
-    out = g[amount_col].sum().reset_index()
-    out.rename(columns={amount_col: "net", date_col: "period_start"}, inplace=True)
+    # chronological order
+    out = out.sort_values("period_start").reset_index(drop=True)
 
-    # Simple period label (e.g., 2025-08 for monthly, 2025-08-11/Mon week start)
-    out[label_col] = out["period_start"].dt.to_period(label_period).astype(str)
-
-    # For readability
+    # inflow/outflow split and cumulative cash
     out["inflow"] = out["net"].clip(lower=0)
     out["outflow"] = out["net"].clip(upper=0).abs()
     out["opening_cash"] = opening_cash
     out["cumulative_cash"] = opening_cash + out["net"].cumsum()
 
-    # Derive a period_end that’s the last date present in the period in data
-    out["period_end"] = out["period_start"]
-
-    cols = [
-        label_col,
-        "period_start",
-        "period_end",
-        "inflow",
-        "outflow",
-        "net",
-        "opening_cash",
-        "cumulative_cash",
-    ]
+    cols = ["label", "period_start", "period_end", "inflow", "outflow", "net", "opening_cash", "cumulative_cash"]
     return out[cols]
+
 
 
 def main() -> None:
