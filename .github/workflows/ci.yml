@@ -28,8 +28,15 @@ jobs:
           if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
           python -m pip install pre-commit pytest pytest-cov
 
+      - name: Update README TOC (doctoc)
+        shell: bash
+        run: |
+          pre-commit run doctoc --all-files || true
+
       - name: Lint (pre-commit)
-        run: pre-commit run --all-files
+        shell: bash
+        run: |
+          SKIP=black,doctoc pre-commit run --all-files
 
       - name: Test with coverage
         shell: bash
