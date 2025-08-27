@@ -1,4 +1,3 @@
-
 # --- Standard ignores ---
 # General
 # Jupyter
@@ -36,3 +35,12 @@ out/*.csv
 !data/
 !data/samples/
 !data/samples/*.csv
+
+# keep example datasets for docs/site
+!docs/
+!docs/examples/
+!docs/examples/*.csv
+!docs/examples/**/*.csv
+!examples/
+!examples/*.csv
+!examples/**/*.csv
