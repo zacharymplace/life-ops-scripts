@@ -37,6 +37,52 @@ jobs:
             python -m pip install pre-commit pytest-cov black codecov
           fi
 
+      # ---- csv2pq smoke test (Ubuntu-only) ----
+      - name: Install csv2pq runtime deps (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
+        shell: bash
+        run: |
+          python -m pip install pandas pyarrow pyyaml click
+
+      - name: csv2pq smoke (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
+        shell: bash
+        run: |
+          set -euo pipefail
+          # generate sample data in CI (no repo changes)
+          python - <<'PY'
+          from pathlib import Path
+          import pandas as pd
+          Path("docs/examples").mkdir(parents=True, exist_ok=True)
+          df = pd.DataFrame({
+              "entity": ["A","A","B","B"],
+              "dept": ["Ops","Ops","Fin","Fin"],
+              "month": pd.to_datetime(["2025-06-01","2025-07-01","2025-06-01","2025-07-01"]),
+              "amount": [1200.25,1300.75,900.0,950.5],
+              "flag": [True, False, True, False],
+          })
+          df.to_csv("docs/examples/in.csv", index=False)
+          PY
+
+          cat > docs/examples/schema.yaml <<'YML'
+          entity: string
+          dept: string
+          month: datetime64[ns]
+          amount: float64
+          flag: boolean
+          YML
+
+          python scripts/csv2pq.py docs/examples/in.csv docs/examples/out.parquet --schema docs/examples/schema.yaml
+
+          python - <<'PY'
+          import pandas as pd
+          df = pd.read_parquet("docs/examples/out.parquet")
+          assert len(df) == 4, f"expected 4 rows, got {len(df)}"
+          expected = {"entity","dept","month","amount","flag"}
+          assert set(df.columns) == expected, f"cols {set(df.columns)} != {expected}"
+          print("csv2pq smoke OK:", df.shape)
+          PY
+
       # ---- Ubuntu-only fixers ----
       - name: Format (black)
         if: matrix.os == 'ubuntu-latest'
@@ -83,7 +129,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         uses: codecov/codecov-action@v4
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}   # omit if public
+          token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage.xml
           flags: ubuntu-py${{ matrix.python-version }}
           fail_ci_if_error: false
