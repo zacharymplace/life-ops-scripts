@@ -16,15 +16,11 @@ The format is based on **Keep a Changelog**, and this project adheres to **Seman
 
 ---
 
-## [v0.1.3] - YYYY-MM-DD
-### Added
-- (to be filled at release time)
-
-### Changed
-- (to be filled at release time)
-
-### Fixed
-- (to be filled at release time)
+## v0.1.3 — 2025-08-27
+- Add cash_flow_rollup **edge case tests** (weekly W–SUN)
+- Add `pytest.ini` for repo-root import discovery
+- Clean test imports (Ruff E402-safe); remove `sys.path` hacks
+- Refresh README TOC via Doctoc
 
 ---
 
