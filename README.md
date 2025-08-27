@@ -1,8 +1,8 @@
 <h1 align="center">🌱 Life Ops Scripts</h1>
 
 <p align="center">
-  <a href="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/ci.yml">
-    <img src="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI" />
+  <a href="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/deploy.yml">
+    <img src="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/deploy.yml/badge.svg?branch=main" alt="CI" />
   </a>
   <a href="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/link-check.yml">
     <img src="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/link-check.yml/badge.svg?branch=main" alt="Link Check" />
