@@ -1,10 +1,12 @@
 name: Deploy
+
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
     tags:
-      - 'v*'   # e.g., v0.1.0
-    workflow_dispatch: {}
+      - 'v*'     # e.g., v0.1.0
+  workflow_dispatch: {}  # <-- enables the "Run workflow" button
 
 permissions:
   contents: write   # needed to create/update release & upload assets
