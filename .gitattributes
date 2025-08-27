@@ -16,3 +16,10 @@
 *.mov binary
 *.wav binary
 *.psd binary
+
+# Examples datasets (published on the site)
+docs/examples/*.csv      text eol=lf
+docs/examples/**/*.csv   text eol=lf
+
+# Data files treated as binary
+*.parquet                binary
