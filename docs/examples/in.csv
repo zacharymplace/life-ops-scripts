@@ -1,0 +1,5 @@
+entity,dept,month,amount,flag
+A,Ops,2025-06-01,1200.25,true
+A,Ops,2025-07-01,1300.75,false
+B,Fin,2025-06-01,900.00,true
+B,Fin,2025-07-01,950.50,false
