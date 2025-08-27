@@ -4,4 +4,3 @@ retry-wait-time = 2
 follow-location = true
 exclude = ["^mailto:"]
 accept = [200, 206, 301, 302, 429]
-

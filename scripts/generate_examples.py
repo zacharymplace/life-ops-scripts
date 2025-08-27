@@ -8,7 +8,9 @@ df = pd.DataFrame(
     {
         "entity": ["A", "A", "B", "B"],
         "dept": ["Ops", "Ops", "Fin", "Fin"],
-        "month": pd.to_datetime(["2025-06-01","2025-07-01","2025-06-01","2025-07-01"]),
+        "month": pd.to_datetime(
+            ["2025-06-01", "2025-07-01", "2025-06-01", "2025-07-01"]
+        ),
         "amount": [1200.25, 1300.75, 900.00, 950.50],
         "flag": [True, False, True, False],
     }

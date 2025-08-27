@@ -1,11 +1,18 @@
 #!/usr/bin/env python
-import pathlib, click, yaml, pandas as pd
+import pathlib
+import click
+import yaml
+import pandas as pd
+
 
 @click.command()
 @click.argument("csv_path", type=click.Path(exists=True, dir_okay=False))
 @click.argument("parquet_path", type=click.Path(dir_okay=False))
-@click.option("--schema", type=click.Path(exists=True, dir_okay=False),
-              help="YAML mapping {column: dtype}. Datetime cols parsed automatically.")
+@click.option(
+    "--schema",
+    type=click.Path(exists=True, dir_okay=False),
+    help="YAML mapping {column: dtype}. Datetime cols parsed automatically.",
+)
 @click.option("--encoding", default="utf-8-sig", show_default=True)
 def main(csv_path, parquet_path, schema, encoding):
     csv_path = pathlib.Path(csv_path)
@@ -22,10 +29,15 @@ def main(csv_path, parquet_path, schema, encoding):
             else:
                 dtype_map[col] = dt
 
-    df = pd.read_csv(csv_path, dtype=dtype_map or None,
-                     parse_dates=parse_dates or None, encoding=encoding)
+    df = pd.read_csv(
+        csv_path,
+        dtype=dtype_map or None,
+        parse_dates=parse_dates or None,
+        encoding=encoding,
+    )
     df.to_parquet(parquet_path, index=False)
     click.echo(f"wrote {parquet_path}")
+
 
 if __name__ == "__main__":
     main()
