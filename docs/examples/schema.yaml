@@ -1,0 +1,5 @@
+entity: string
+dept: string
+month: datetime64[ns]
+amount: float64
+flag: boolean
