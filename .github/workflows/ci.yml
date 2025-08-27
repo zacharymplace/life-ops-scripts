@@ -32,26 +32,32 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
           python -m pip install pytest
-          # Only Ubuntu needs tooling for formatting/lint/coverage
+          # Ubuntu: add tooling for lint/coverage
           if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
             python -m pip install pre-commit pytest-cov black codecov
           fi
 
-      # ---- Ubuntu-only: format + pre-commit (skip on Windows) ----
+      # ---- Ubuntu-only fixers ----
       - name: Format (black)
         if: matrix.os == 'ubuntu-latest'
         shell: bash
         run: |
           black .
 
-      - name: Lint (pre-commit, skip black)
+      - name: Update README TOC (doctoc)
         if: matrix.os == 'ubuntu-latest'
         shell: bash
         run: |
-          SKIP=black pre-commit run --all-files
+          pre-commit run doctoc --all-files || true
+
+      # ---- Ubuntu-only lint (skip the fixers that already modified files) ----
+      - name: Lint (pre-commit, skip black & doctoc)
+        if: matrix.os == 'ubuntu-latest'
+        shell: bash
+        run: |
+          SKIP=black,doctoc pre-commit run --all-files
 
       # ---- Tests ----
-      # Ubuntu: full coverage (feeds Codecov)
       - name: Test with coverage (Ubuntu)
         if: matrix.os == 'ubuntu-latest'
         shell: bash
@@ -61,7 +67,6 @@ jobs:
             --cov-report=xml:coverage.xml \
             --cov-report=term-missing
 
-      # Windows: tests only (faster)
       - name: Test (Windows)
         if: matrix.os == 'windows-latest'
         run: |

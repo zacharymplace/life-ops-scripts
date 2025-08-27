@@ -24,6 +24,7 @@
 
 - [🔧 Purpose](#-purpose)
 - [🚀 Getting Started](#-getting-started)
+  - [Normalize Tiller CSV (to `date,account,description,category,amount`)](#normalize-tiller-csv-to-dateaccountdescriptioncategoryamount)
   - [Cash Flow Rollup (weekly/monthly)](#cash-flow-rollup-weeklymonthly)
 - [📂 Repo Layout](#-repo-layout)
 - [🧭 Governance](#%F0%9F%A7%AD-governance)

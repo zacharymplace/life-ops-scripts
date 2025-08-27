@@ -6,6 +6,7 @@ SCRIPT = ROOT / "scripts/python/finance/normalize_tiller_csv.py"
 SAMPLE = ROOT / "data/samples/transactions_sample.csv"
 OUTDIR = ROOT / "out"
 
+
 def test_normalize_smoke():
     OUTDIR.mkdir(exist_ok=True)
     cmd = f'python "{SCRIPT}" --infile "{SAMPLE}" --outdir "{OUTDIR}"'
