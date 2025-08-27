@@ -65,7 +65,9 @@ def read_transactions(
     return df.sort_values(date_col)
 
 
-def rollup(df: pd.DataFrame, freq: str, date_col: str, amount_col: str, opening_cash: float) -> pd.DataFrame:
+def rollup(
+    df: pd.DataFrame, freq: str, date_col: str, amount_col: str, opening_cash: float
+) -> pd.DataFrame:
     if freq == "monthly":
         # Month end grouping
         g = df.groupby(pd.Grouper(key=date_col, freq="ME"))
@@ -91,9 +93,17 @@ def rollup(df: pd.DataFrame, freq: str, date_col: str, amount_col: str, opening_
     out["opening_cash"] = opening_cash
     out["cumulative_cash"] = opening_cash + out["net"].cumsum()
 
-    cols = ["label", "period_start", "period_end", "inflow", "outflow", "net", "opening_cash", "cumulative_cash"]
+    cols = [
+        "label",
+        "period_start",
+        "period_end",
+        "inflow",
+        "outflow",
+        "net",
+        "opening_cash",
+        "cumulative_cash",
+    ]
     return out[cols]
-
 
 
 def main() -> None:

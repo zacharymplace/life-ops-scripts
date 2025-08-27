@@ -1,10 +1,17 @@
-from pathlib import Path
+# stdlib
 import csv
+from pathlib import Path  # delete this line if not used later
+
+# third-party
 import pandas as pd
 import pytest
 
-# import from your module under test
-from scripts.python.finance.cash_flow_rollup import rollup, read_transactions, setup_log
+# local
+from scripts.python.finance.cash_flow_rollup import (
+    rollup,
+    read_transactions,
+    setup_log,
+)
 
 
 # ---------- helpers ----------

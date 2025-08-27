@@ -1,2 +1,2 @@
-date,inflow,outflow,net,cash_position
-2025-08-31,870.77,0.0,870.77,100870.77
+label,period_start,period_end,inflow,outflow,net,opening_cash,cumulative_cash
+2025-01,2025-01-01,2025-01-31,2790,0,2790,100000.0,102790.0
