@@ -82,3 +82,18 @@ The format is based on **Keep a Changelog**, and this project adheres to **Seman
 [v0.1.2]: https://github.com/zacharymplace/life-ops-scripts/compare/v0.1.1...v0.1.2
 [v0.1.1]: https://github.com/zacharymplace/life-ops-scripts/compare/v0.1.0...v0.1.1
 [v0.1.0]: https://github.com/zacharymplace/life-ops-scripts/releases/tag/v0.1.0
+
+## [v0.1.4] - 2025-08-27
+### Added
+- `csv2pq.py` CLI
+- `generate_examples.py` and example datasets (`in.csv`, `schema.yaml`)
+- Workflows: Link Check, Generate Examples
+
+### Changed
+- CI and Deploy pipelines
+- `.gitattributes`, `.gitignore`, link-check configuration
+- README updates
+
+### Chore
+- Pre-commit formatting fixes (ruff, EOF newline, trailing whitespace)
+
