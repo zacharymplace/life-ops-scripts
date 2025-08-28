@@ -2,7 +2,10 @@
 
 <p align="center">
   <a href="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/deploy.yml">
-    <img src="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/deploy.yml/badge.svg?branch=main" alt="CI" />
+    <img src="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/deploy.yml/badge.svg?branch=main" alt="Deploy" />
+  </a>
+  <a href="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/ci.yml">
+    <img src="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI" />
   </a>
   <a href="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/link-check.yml">
     <img src="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/link-check.yml/badge.svg?branch=main" alt="Link Check" />
@@ -26,11 +29,12 @@
 
 - [🔧 Purpose](#-purpose)
 - [🚀 Getting Started](#-getting-started)
+  - [CSV → Parquet (`csv2pq`)](#csv--parquet-csv2pq)
   - [Normalize Tiller CSV (to `date,account,description,category,amount`)](#normalize-tiller-csv-to-dateaccountdescriptioncategoryamount)
   - [Cash Flow Rollup (weekly/monthly)](#cash-flow-rollup-weeklymonthly)
 - [📂 Repo Layout](#-repo-layout)
-- [🧭 Governance](#%F0%9F%A7%AD-governance)
-- [🗺 Roadmap](#%F0%9F%97%BA-roadmap)
+- [🧭 Governance](#-governance)
+- [🗺 Roadmap](#-roadmap)
 - [🤝 Contributing](#-contributing)
 - [🚀 Releasing](#-releasing)
   - [Steps](#steps)
@@ -43,14 +47,14 @@
 
 ## 🔧 Purpose
 
-Automations for daily life — budgeting helpers, home integrations, and media utilities.
+Automations for daily life — budgeting helpers, home integrations, and media utilities.  
 The goal: reduce friction, save time, and make everyday systems more enjoyable.
 
 ---
 
 ## 🚀 Getting Started
 
-```bash
+```
 # (Optional) create a virtual environment
 python -m venv .venv && source .venv/bin/activate
 # Windows: .venv\Scripts\activate
@@ -61,9 +65,30 @@ pip install -r requirements-dev.txt
 # pip install -r requirements.txt
 ```
 
+### CSV → Parquet (`csv2pq`)
+
+Convert CSV to Parquet with optional schema, Arrow dtypes, compression, and index control.
+
+```
+python scripts/csv2pq.py docs/examples/in.csv docs/examples/out.parquet \
+  --schema docs/examples/schema.yaml \
+  --dtype-backend pyarrow \
+  --compression zstd \
+  --no-index
+```
+
+**Flags**
+- `--schema`: YAML map `{column: dtype}`; any key containing “date” is parsed as datetime.
+- `--dtype-backend`: `numpy` (default) or `pyarrow` for Arrow dtypes in pandas (pandas ≥ 2.0).
+- `--compression`: `snappy` (default), `gzip`, `zstd`, `brotli`, or `none`.
+- `--index/--no-index`: include or drop the DataFrame index (default: `--no-index`).
+
+**Samples** live in `docs/examples/`:
+- `in.csv`, `schema.yaml` → `out.parquet` (used by CI smoke test)
+
 ### Normalize Tiller CSV (to `date,account,description,category,amount`)
 
-```bash
+```
 python scripts/python/finance/normalize_tiller_csv.py \
   --infile data/samples/transactions_sample.csv \
   --outdir out
@@ -73,7 +98,7 @@ Outputs: `out/tiller_normalized.csv`
 
 ### Cash Flow Rollup (weekly/monthly)
 
-```bash
+```
 python scripts/python/finance/cash_flow_rollup.py \
   --infile out/tiller_normalized.csv \
   --date-col date \
@@ -83,27 +108,29 @@ python scripts/python/finance/cash_flow_rollup.py \
   --outdir out
 ```
 
-Outputs:
-
-- `out/cash_monthly_rollup.csv` (or `cash_weekly_rollup.csv`) with inflow, outflow, net, and cumulative cash.
+Outputs: `out/cash_monthly_rollup.csv` (or `cash_weekly_rollup.csv`) with inflow, outflow, net, and cumulative cash.
 
 ---
 
 ## 📂 Repo Layout
 
-```text
+```
 ├─ README.md
 ├─ scripts/
-│  ├─ python/        → core Python scripts
-│  └─ js/            → JavaScript utilities
+│  ├─ csv2pq.py          → CSV → Parquet CLI
+│  ├─ generate_examples.py
+│  └─ python/            → finance utilities
+├─ docs/
+│  └─ examples/          → sample CSV/Parquet + schema
 ├─ data/
-│  ├─ samples/       → demo input data
-├─ docs/             → notes, guides, ADRs
-├─ tests/            → unit & integration tests
+│  └─ samples/           → demo input data
+├─ tests/                → unit & integration tests
 ├─ .github/
+│  ├─ workflows/         → ci.yml, deploy.yml, link-check.yml
 │  ├─ ISSUE_TEMPLATE/
 │  └─ PULL_REQUEST_TEMPLATE.md
 ├─ .gitignore
+├─ .gitattributes
 ├─ LICENSE
 └─ CHANGELOG.md
 ```
@@ -112,62 +139,57 @@ Outputs:
 
 ## 🧭 Governance
 
-- **Owner**: Z$
-- **Review Cycle**: Quarterly
-- **Version**: see latest → Releases badge above
-- **Audit Notes**: Track design decisions in `docs/decisions/`
-- **Maintainers Guide**: see [docs/MAINTAINERS.md](docs/MAINTAINERS.md) for governance, PR, and release checklists
+- **Owner**: Z$  
+- **Review Cycle**: Quarterly  
+- **Version**: see latest → Releases badge above  
+- **Audit Notes**: Track design decisions in `docs/decisions/`  
+- **Maintainers Guide**: see `docs/MAINTAINERS.md` (governance, PR, release checklists)
 
 ---
 
 ## 🗺 Roadmap
 
-- [ ] Define first 2-3 scripts or notebooks (e.g., cash flow, hosting helper)
-- [ ] Add data samples + tests for reproducibility
-- [ ] Wire CI (ruff + pytest)
-- [ ] Draft contribution guidelines
-- [ ] Publish new tagged releases regularly
+- [x] Tag-gated Deploy + Releases (artifacts + notes)
+- [x] CI smoke test for `csv2pq` (Ubuntu)
+- [ ] Tests for finance utilities
+- [ ] Package skeleton (`pyproject.toml`) for future publishing
+- [ ] More examples & how-tos
 
 ---
 
 ## 🤝 Contributing
 
-This is primarily a personal project, but feedback, forks, and PRs are welcome.
+This is primarily a personal project, but feedback, forks, and PRs are welcome.  
 See `CONTRIBUTING.md`.
 
 ---
 
 ## 🚀 Releasing
 
-Tagged releases are built and published automatically by CI.
+Tagged releases build and publish automatically.
 
 ### Steps
 
-1. Make sure you’re on `main` and up to date:
-
-   ```bash
+1. Ensure `main` is up to date:
+   ```
    git checkout main
-   git pull
+   git pull --ff-only
    ```
-
 2. Tag and push:
-
-   ```bash
-   # bump version
-   git tag v0.1.2
-   git push origin v0.1.2
    ```
-
-3. CI/CD will
-   - Run `deploy.sh` to package `scripts/`, `docs/`, and metadata
-   - Upload `life-ops-scripts-<tag>.zip` + `.sha256` to the **Releases** page
-   - No-op safely if not on a tag
+   git tag v0.1.5
+   git push origin v0.1.5
+   ```
+3. CI/CD will:
+   - Run `deploy.sh` to package artifacts into `out/`
+   - Upload `life-ops-scripts-<tag>.zip` + `.sha256` to **Releases**
+   - Only create a Release on tag runs (manual “Run workflow” won’t create one)
 
 ---
 
 ## 🔗 Links
 
-- **Releases:** <https://github.com/zacharymplace/life-ops-scripts/releases>
+- **Releases:** <https://github.com/zacharymplace/life-ops-scripts/releases>  
 - **Actions (CI):** <https://github.com/zacharymplace/life-ops-scripts/actions>
 
 ---
