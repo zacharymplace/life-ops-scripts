@@ -27,7 +27,9 @@ def _load_schema(schema_path: pathlib.Path) -> tuple[Dict[str, str], List[str]]:
 
 
 @click.command(context_settings=dict(help_option_names=["-h", "--help"]))
-@click.argument("csv_path", type=click.Path(exists=True, dir_okay=False, path_type=pathlib.Path))
+@click.argument(
+    "csv_path", type=click.Path(exists=True, dir_okay=False, path_type=pathlib.Path)
+)
 @click.argument("parquet_path", type=click.Path(dir_okay=False, path_type=pathlib.Path))
 @click.option(
     "--schema",
@@ -43,13 +45,22 @@ def _load_schema(schema_path: pathlib.Path) -> tuple[Dict[str, str], List[str]]:
 )
 @click.option(
     "--compression",
-    type=click.Choice(["snappy", "gzip", "zstd", "brotli", "none"], case_sensitive=False),
+    type=click.Choice(
+        ["snappy", "gzip", "zstd", "brotli", "none"], case_sensitive=False
+    ),
     default="snappy",
     show_default=True,
     help="Parquet compression codec.",
 )
-@click.option("--encoding", default="utf-8-sig", show_default=True, help="CSV text encoding.")
-@click.option("--index/--no-index", default=False, show_default=True, help="Write DataFrame index.")
+@click.option(
+    "--encoding", default="utf-8-sig", show_default=True, help="CSV text encoding."
+)
+@click.option(
+    "--index/--no-index",
+    default=False,
+    show_default=True,
+    help="Write DataFrame index.",
+)
 def main(
     csv_path: pathlib.Path,
     parquet_path: pathlib.Path,
@@ -63,7 +74,9 @@ def main(
     dtype_map, parse_dates = _load_schema(schema) if schema else ({}, [])
 
     # pandas.read_csv supports dtype_backend=['numpy_nullable','pyarrow'] (pandas >=2.0)
-    dtype_backend_val = "numpy_nullable" if dtype_backend.lower() == "numpy" else "pyarrow"
+    dtype_backend_val = (
+        "numpy_nullable" if dtype_backend.lower() == "numpy" else "pyarrow"
+    )
 
     read_csv_kwargs = dict(
         dtype=(dtype_map or None),
