@@ -63,7 +63,6 @@ jobs:
               "B,Fin,2025-06-01,900.0,true" \
               "B,Fin,2025-07-01,950.5,false" \
               > docs/examples/in.csv
-
             printf "%s\n" \
               "entity: string" \
               "dept: string" \
@@ -73,20 +72,15 @@ jobs:
               > docs/examples/schema.yaml
           fi
 
-          # Run converter
+          # Convert
           python scripts/csv2pq.py docs/examples/in.csv out/test.parquet \
             --schema docs/examples/schema.yaml \
             --dtype-backend pyarrow \
             --compression zstd \
             --no-index
 
-          # Validate output (use heredoc to avoid YAML parsing issues)
-          python - <<'PY'
-import pyarrow.parquet as pq
-t = pq.read_table("out/test.parquet")
-assert t.num_rows > 0, "no rows written"
-print("csv2pq smoke OK: rows=", t.num_rows, "cols=", len(t.schema))
-PY
+          # Validate (single-line to avoid YAML heredoc quirks)
+          python -c "import pyarrow.parquet as pq; t=pq.read_table('out/test.parquet'); assert t.num_rows>0, 'no rows written'; print('csv2pq smoke OK: rows=', t.num_rows, 'cols=', len(t.schema))"
 
       # ---- Ubuntu-only fixers ----
       - name: Format (black)
