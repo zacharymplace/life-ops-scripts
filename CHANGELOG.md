@@ -96,3 +96,8 @@ The format is based on **Keep a Changelog**, and this project adheres to **Seman
 
 ### Chore
 - Pre-commit formatting fixes (ruff, EOF newline, trailing whitespace)
+
+## [v0.1.5] - 2025-08-27
+- csv2pq: dtype-backend, compression, index flags
+- Add pyarrow dependency
+- Pre-commit + .editorconfig housekeeping
