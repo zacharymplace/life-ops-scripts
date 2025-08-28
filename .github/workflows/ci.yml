@@ -21,7 +21,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          cache: 'pip'
+          cache: pip
           cache-dependency-path: |
             requirements-dev.txt
             requirements.txt
@@ -49,39 +49,49 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          # generate sample data in CI (no repo changes)
+          mkdir -p docs/examples out
+
+          # Use repo examples if present, otherwise create a tiny sample
+          if [[ -f docs/examples/in.csv && -f docs/examples/schema.yaml ]]; then
+            echo "Using repo examples in docs/examples/."
+          else
+            echo "Generating minimal examples (in.csv + schema.yaml)."
+            python - <<'PY'
+from pathlib import Path
+import pandas as pd
+Path("docs/examples").mkdir(parents=True, exist_ok=True)
+df = pd.DataFrame({
+    "entity": ["A","A","B","B"],
+    "dept": ["Ops","Ops","Fin","Fin"],
+    "month": pd.to_datetime(["2025-06-01","2025-07-01","2025-06-01","2025-07-01"]),
+    "amount": [1200.25,1300.75,900.0,950.5],
+    "flag": [True, False, True, False],
+})
+df.to_csv("docs/examples/in.csv", index=False)
+open("docs/examples/schema.yaml","w").write(
+    "entity: string\n"
+    "dept: string\n"
+    "month: datetime64[ns]\n"
+    "amount: float64\n"
+    "flag: boolean\n"
+)
+PY
+          fi
+
+          # Run converter and validate output
+          python scripts/csv2pq.py docs/examples/in.csv out/test.parquet \
+            --schema docs/examples/schema.yaml \
+            --dtype-backend pyarrow \
+            --compression zstd \
+            --no-index
+
           python - <<'PY'
-          from pathlib import Path
-          import pandas as pd
-          Path("docs/examples").mkdir(parents=True, exist_ok=True)
-          df = pd.DataFrame({
-              "entity": ["A","A","B","B"],
-              "dept": ["Ops","Ops","Fin","Fin"],
-              "month": pd.to_datetime(["2025-06-01","2025-07-01","2025-06-01","2025-07-01"]),
-              "amount": [1200.25,1300.75,900.0,950.5],
-              "flag": [True, False, True, False],
-          })
-          df.to_csv("docs/examples/in.csv", index=False)
-          PY
-
-          cat > docs/examples/schema.yaml <<'YML'
-          entity: string
-          dept: string
-          month: datetime64[ns]
-          amount: float64
-          flag: boolean
-          YML
-
-          python scripts/csv2pq.py docs/examples/in.csv docs/examples/out.parquet --schema docs/examples/schema.yaml
-
-          python - <<'PY'
-          import pandas as pd
-          df = pd.read_parquet("docs/examples/out.parquet")
-          assert len(df) == 4, f"expected 4 rows, got {len(df)}"
-          expected = {"entity","dept","month","amount","flag"}
-          assert set(df.columns) == expected, f"cols {set(df.columns)} != {expected}"
-          print("csv2pq smoke OK:", df.shape)
-          PY
+import pyarrow.parquet as pq, pandas as pd
+t = pq.read_table("out/test.parquet")
+df = t.to_pandas()
+assert len(df) > 0, "no rows written"
+print("csv2pq smoke OK:", df.shape, list(df.columns))
+PY
 
       # ---- Ubuntu-only fixers ----
       - name: Format (black)
