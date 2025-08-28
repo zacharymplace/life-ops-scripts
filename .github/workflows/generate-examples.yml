@@ -28,14 +28,8 @@ jobs:
           # Prefer repo requirements if present
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
-          # Fallbacks (in case requirements files don't include them)
-          python - <<'PY'
-import importlib.util, sys, subprocess
-needed = ["pandas", "pyarrow"]
-missing = [p for p in needed if importlib.util.find_spec(p) is None]
-if missing:
-    subprocess.check_call([sys.executable, "-m", "pip", "install", *missing])
-PY
+          # Ensure core deps for generation even if not listed above
+          pip install pandas pyarrow
 
       - name: Generate datasets (script)
         shell: bash
