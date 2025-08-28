@@ -29,12 +29,12 @@
 
 - [🔧 Purpose](#-purpose)
 - [🚀 Getting Started](#-getting-started)
-  - [CSV → Parquet (`csv2pq`)](#csv--parquet-csv2pq)
+  - [CSV → Parquet (`csv2pq`)](#csv-%E2%86%92-parquet-csv2pq)
   - [Normalize Tiller CSV (to `date,account,description,category,amount`)](#normalize-tiller-csv-to-dateaccountdescriptioncategoryamount)
   - [Cash Flow Rollup (weekly/monthly)](#cash-flow-rollup-weeklymonthly)
 - [📂 Repo Layout](#-repo-layout)
-- [🧭 Governance](#-governance)
-- [🗺 Roadmap](#-roadmap)
+- [🧭 Governance](#%F0%9F%A7%AD-governance)
+- [🗺 Roadmap](#%F0%9F%97%BA-roadmap)
 - [🤝 Contributing](#-contributing)
 - [🚀 Releasing](#-releasing)
   - [Steps](#steps)
@@ -47,7 +47,7 @@
 
 ## 🔧 Purpose
 
-Automations for daily life — budgeting helpers, home integrations, and media utilities.  
+Automations for daily life — budgeting helpers, home integrations, and media utilities.
 The goal: reduce friction, save time, and make everyday systems more enjoyable.
 
 ---
@@ -139,10 +139,10 @@ Outputs: `out/cash_monthly_rollup.csv` (or `cash_weekly_rollup.csv`) with inflow
 
 ## 🧭 Governance
 
-- **Owner**: Z$  
-- **Review Cycle**: Quarterly  
-- **Version**: see latest → Releases badge above  
-- **Audit Notes**: Track design decisions in `docs/decisions/`  
+- **Owner**: Z$
+- **Review Cycle**: Quarterly
+- **Version**: see latest → Releases badge above
+- **Audit Notes**: Track design decisions in `docs/decisions/`
 - **Maintainers Guide**: see `docs/MAINTAINERS.md` (governance, PR, release checklists)
 
 ---
@@ -159,7 +159,7 @@ Outputs: `out/cash_monthly_rollup.csv` (or `cash_weekly_rollup.csv`) with inflow
 
 ## 🤝 Contributing
 
-This is primarily a personal project, but feedback, forks, and PRs are welcome.  
+This is primarily a personal project, but feedback, forks, and PRs are welcome.
 See `CONTRIBUTING.md`.
 
 ---
@@ -189,7 +189,7 @@ Tagged releases build and publish automatically.
 
 ## 🔗 Links
 
-- **Releases:** <https://github.com/zacharymplace/life-ops-scripts/releases>  
+- **Releases:** <https://github.com/zacharymplace/life-ops-scripts/releases>
 - **Actions (CI):** <https://github.com/zacharymplace/life-ops-scripts/actions>
 
 ---
