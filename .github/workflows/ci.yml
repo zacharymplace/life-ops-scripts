@@ -51,7 +51,7 @@ jobs:
           set -euo pipefail
           mkdir -p docs/examples out
 
-          # Use repo examples if present, otherwise create minimal ones (no heredocs)
+          # Use repo examples if present, otherwise create minimal ones
           if [[ -f docs/examples/in.csv && -f docs/examples/schema.yaml ]]; then
             echo "Using repo examples in docs/examples/."
           else
@@ -80,11 +80,13 @@ jobs:
             --compression zstd \
             --no-index
 
-          # Validate output (one-liner, no heredoc)
-          python -c "import pyarrow.parquet as pq, pandas as pd; \
-t=pq.read_table('out/test.parquet'); df=t.to_pandas(); \
-assert len(df)>0, 'no rows written'; \
-print('csv2pq smoke OK:', df.shape, list(df.columns))"
+          # Validate output (use heredoc to avoid YAML parsing issues)
+          python - <<'PY'
+import pyarrow.parquet as pq
+t = pq.read_table("out/test.parquet")
+assert t.num_rows > 0, "no rows written"
+print("csv2pq smoke OK: rows=", t.num_rows, "cols=", len(t.schema))
+PY
 
       # ---- Ubuntu-only fixers ----
       - name: Format (black)
