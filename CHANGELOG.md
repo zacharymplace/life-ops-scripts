@@ -14,6 +14,20 @@ The format is based on **Keep a Changelog**, and this project adheres to **Seman
 ### Fixed
 - (placeholder) Edge handling for empty input files
 
+## [v0.1.4] - 2025-08-27
+### Added
+- `csv2pq.py` CLI
+- `generate_examples.py` and example datasets (`in.csv`, `schema.yaml`)
+- Workflows: Link Check, Generate Examples
+
+### Changed
+- CI and Deploy pipelines
+- `.gitattributes`, `.gitignore`, link-check configuration
+- README updates
+
+### Chore
+- Pre-commit formatting fixes (ruff, EOF newline, trailing whitespace)
+
 ---
 
 ## v0.1.3 — 2025-08-27
