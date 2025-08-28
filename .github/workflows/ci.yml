@@ -51,47 +51,40 @@ jobs:
           set -euo pipefail
           mkdir -p docs/examples out
 
-          # Use repo examples if present, otherwise create a tiny sample
+          # Use repo examples if present, otherwise create minimal ones (no heredocs)
           if [[ -f docs/examples/in.csv && -f docs/examples/schema.yaml ]]; then
             echo "Using repo examples in docs/examples/."
           else
             echo "Generating minimal examples (in.csv + schema.yaml)."
-            python - <<'PY'
-from pathlib import Path
-import pandas as pd
-Path("docs/examples").mkdir(parents=True, exist_ok=True)
-df = pd.DataFrame({
-    "entity": ["A","A","B","B"],
-    "dept": ["Ops","Ops","Fin","Fin"],
-    "month": pd.to_datetime(["2025-06-01","2025-07-01","2025-06-01","2025-07-01"]),
-    "amount": [1200.25,1300.75,900.0,950.5],
-    "flag": [True, False, True, False],
-})
-df.to_csv("docs/examples/in.csv", index=False)
-open("docs/examples/schema.yaml","w").write(
-    "entity: string\n"
-    "dept: string\n"
-    "month: datetime64[ns]\n"
-    "amount: float64\n"
-    "flag: boolean\n"
-)
-PY
+            printf "%s\n" \
+              "entity,dept,month,amount,flag" \
+              "A,Ops,2025-06-01,1200.25,true" \
+              "A,Ops,2025-07-01,1300.75,false" \
+              "B,Fin,2025-06-01,900.0,true" \
+              "B,Fin,2025-07-01,950.5,false" \
+              > docs/examples/in.csv
+
+            printf "%s\n" \
+              "entity: string" \
+              "dept: string" \
+              "month: datetime64[ns]" \
+              "amount: float64" \
+              "flag: boolean" \
+              > docs/examples/schema.yaml
           fi
 
-          # Run converter and validate output
+          # Run converter
           python scripts/csv2pq.py docs/examples/in.csv out/test.parquet \
             --schema docs/examples/schema.yaml \
             --dtype-backend pyarrow \
             --compression zstd \
             --no-index
 
-          python - <<'PY'
-import pyarrow.parquet as pq, pandas as pd
-t = pq.read_table("out/test.parquet")
-df = t.to_pandas()
-assert len(df) > 0, "no rows written"
-print("csv2pq smoke OK:", df.shape, list(df.columns))
-PY
+          # Validate output (one-liner, no heredoc)
+          python -c "import pyarrow.parquet as pq, pandas as pd; \
+t=pq.read_table('out/test.parquet'); df=t.to_pandas(); \
+assert len(df)>0, 'no rows written'; \
+print('csv2pq smoke OK:', df.shape, list(df.columns))"
 
       # ---- Ubuntu-only fixers ----
       - name: Format (black)
