@@ -10,3 +10,5 @@ python-dateutil
 
 # Testing
 pytest>=8.0
+
+pyarrow
