@@ -61,7 +61,6 @@ jobs:
               "B,Fin,2025-06-01,900.0,true" \
               "B,Fin,2025-07-01,950.5,false" \
               > docs/examples/in.csv
-
             printf "%s\n" \
               "entity: string" \
               "dept: string" \
@@ -78,13 +77,8 @@ jobs:
             --compression zstd \
             --no-index
 
-          # Validate output
-          python - <<'PY'
-import pyarrow.parquet as pq
-t = pq.read_table("out/test.parquet")
-assert t.num_rows > 0, "no rows written"
-print("csv2pq smoke OK: rows=", t.num_rows, "cols=", len(t.schema))
-PY
+          # Validate output (one-liner to avoid YAML heredoc issues)
+          python -c 'import pyarrow.parquet as pq; t = pq.read_table("out/test.parquet"); assert t.num_rows > 0, "no rows written"; print(f"csv2pq smoke OK: rows={t.num_rows} cols={len(t.schema)}")'
 
       # ---- Ubuntu-only fixers ----
       - name: Format (black)
