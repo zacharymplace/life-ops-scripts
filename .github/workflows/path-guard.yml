@@ -1,12 +1,16 @@
 name: Path Guard
+
 on:
-  pull_request:
   push:
-    branches: [ main ]
+    branches: [main]
+  pull_request:
+  workflow_dispatch: {}   # optional: lets you run it manually
+
 jobs:
   guard:
     uses: zacharymplace/gha-templates/.github/workflows/path-guard.yml@main
-    with:
-      # extra_patterns: ""
-      # extra_excludes: |
-      #   --exclude-dir=docs/fixtures
+    # If you want to pass inputs later, uncomment and edit:
+    # with:
+    #   extra_patterns: ""     # space-separated -e 'foo' -e 'bar' etc.
+    #   extra_excludes: |      # extra git grep excludes, one per line
+    #     --exclude-dir=docs/fixtures
