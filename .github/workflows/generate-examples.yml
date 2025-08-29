@@ -20,18 +20,20 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements-dev.txt
+            pyproject.toml
 
-      - name: Install deps
+      - name: Install deps (+ package for CLI)
         shell: bash
         run: |
           python -m pip install --upgrade pip
-          # Prefer repo requirements if present
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
-          # Ensure core deps for generation even if not listed above
-          pip install pandas pyarrow
+          pip install -e .  # gives us `csv2pq`
 
-      - name: Generate datasets (script)
+      - name: Generate datasets (script if present)
         shell: bash
         run: |
           if [ -f scripts/generate_examples.py ]; then
@@ -40,22 +42,18 @@ jobs:
             echo "scripts/generate_examples.py not found; skipping."
           fi
 
-      - name: Generate Parquet via CLI (csv2pq)
+      - name: Convert CSV→Parquet via CLI (csv2pq)
         shell: bash
         run: |
-          if [ -f scripts/csv2pq.py ]; then
-            mkdir -p docs/examples
-            if [ -f docs/examples/in.csv ] && [ -f docs/examples/schema.yaml ]; then
-              python scripts/csv2pq.py docs/examples/in.csv docs/examples/out.parquet \
-                --schema docs/examples/schema.yaml \
-                --dtype-backend pyarrow \
-                --compression zstd \
-                --no-index
-            else
-              echo "inputs missing (docs/examples/in.csv or schema.yaml); skipping csv2pq."
-            fi
+          mkdir -p docs/examples
+          if [ -f docs/examples/in.csv ] && [ -f docs/examples/schema.yaml ]; then
+            csv2pq docs/examples/in.csv docs/examples/out.parquet \
+              --schema docs/examples/schema.yaml \
+              --dtype-backend pyarrow \
+              --compression zstd \
+              --no-index
           else
-            echo "scripts/csv2pq.py not found; skipping csv2pq."
+            echo "inputs missing (docs/examples/in.csv or schema.yaml); skipping csv2pq."
           fi
 
       - name: Commit changes (if any)
@@ -68,7 +66,7 @@ jobs:
             git commit -m "chore(examples): refresh datasets [skip ci]"
             git push
           else
-            echo "No changes to docs/examples."
+            echo "No changes in docs/examples."
           fi
 
       - name: Upload artifact (optional)
