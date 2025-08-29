@@ -23,26 +23,27 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: pip
           cache-dependency-path: |
-            requirements-dev.txt
             requirements.txt
+            requirements-dev.txt
             pyproject.toml
 
       - name: Install deps
         shell: bash
         run: |
+          set -euo pipefail
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
-          python -m pip install pytest
-          # Install your package only when packaging config exists
-          if [ -f pyproject.toml ] || [ -f setup.py ]; then
+          pip install pytest
+          # Ubuntu: extra tools
+          if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
+            pip install pre-commit pytest-cov black codecov
+          fi
+          # Only install package if pyproject exists on this branch
+          if [ -f pyproject.toml ]; then
             pip install -e .
           else
-            echo "No pyproject/setup.py found; skipping editable install."
-          fi
-          # Ubuntu: add tooling for lint/coverage
-          if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
-            python -m pip install pre-commit pytest-cov black codecov
+            echo "No pyproject.toml; skipping editable install."
           fi
 
       # ---- csv2pq smoke test (Ubuntu-only) ----
@@ -52,12 +53,10 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p docs/examples out
-
-          # Use repo examples if present, otherwise create minimal ones
+          # Use repo samples, else generate tiny sample
           if [[ -f docs/examples/in.csv && -f docs/examples/schema.yaml ]]; then
-            echo "Using repo examples in docs/examples/."
+            echo "Using repo examples."
           else
-            echo "Generating minimal examples (in.csv + schema.yaml)."
             printf "%s\n" \
               "entity,dept,month,amount,flag" \
               "A,Ops,2025-06-01,1200.25,true" \
@@ -74,26 +73,38 @@ jobs:
               > docs/examples/schema.yaml
           fi
 
-          # Pick runner: CLI if installed; else src/ path; else legacy scripts/
+          # Prefer installed console script; fall back to repo paths
           if command -v csv2pq >/dev/null 2>&1; then
-            RUNNER=(csv2pq)
+            csv2pq docs/examples/in.csv out/test.parquet \
+              --schema docs/examples/schema.yaml \
+              --dtype-backend pyarrow \
+              --compression zstd \
+              --no-index
           elif [ -f src/life_ops_scripts/csv2pq.py ]; then
-            RUNNER=(python src/life_ops_scripts/csv2pq.py)
+            python src/life_ops_scripts/csv2pq.py docs/examples/in.csv out/test.parquet \
+              --schema docs/examples/schema.yaml \
+              --dtype-backend pyarrow \
+              --compression zstd \
+              --no-index
+          elif [ -f scripts/csv2pq.py ]; then
+            python scripts/csv2pq.py docs/examples/in.csv out/test.parquet \
+              --schema docs/examples/schema.yaml \
+              --dtype-backend pyarrow \
+              --compression zstd \
+              --no-index
           else
-            RUNNER=(python scripts/csv2pq.py)
+            echo "csv2pq not found." >&2
+            exit 1
           fi
 
-          # Run converter
-          "${RUNNER[@]}" docs/examples/in.csv out/test.parquet \
-            --schema docs/examples/schema.yaml \
-            --dtype-backend pyarrow \
-            --compression zstd \
-            --no-index
+          python - <<'PY'
+import pyarrow.parquet as pq
+t = pq.read_table("out/test.parquet")
+assert t.num_rows > 0, "no rows written"
+print("csv2pq smoke OK: rows=", t.num_rows, "cols=", len(t.schema))
+PY
 
-          # Validate output (one-liner to avoid YAML heredoc issues)
-          python -c 'import pyarrow.parquet as pq; t = pq.read_table("out/test.parquet"); assert t.num_rows > 0, "no rows written"; print(f"csv2pq smoke OK: rows={t.num_rows} cols={len(t.schema)}")'
-
-      # ---- Ubuntu-only fixers ----
+      # ---- Ubuntu-only fixers/lint ----
       - name: Format (black)
         if: matrix.os == 'ubuntu-latest'
         shell: bash
@@ -104,33 +115,43 @@ jobs:
         shell: bash
         run: pre-commit run doctoc --all-files || true
 
-      # ---- Ubuntu-only lint (skip the fixers that already modified files) ----
       - name: Lint (pre-commit, skip black & doctoc)
         if: matrix.os == 'ubuntu-latest'
         shell: bash
         run: SKIP=black,doctoc pre-commit run --all-files
 
       # ---- Tests ----
-      - name: Test with coverage (Ubuntu)
+      - name: Tests with coverage (Ubuntu)
         if: matrix.os == 'ubuntu-latest'
         shell: bash
         run: |
           pytest -q --disable-warnings \
-            --cov=scripts \
-            --cov=life_ops_scripts \
+            --cov=scripts --cov=life_ops_scripts \
             --cov-report=xml:coverage.xml \
             --cov-report=term-missing
 
-      - name: Test (Windows)
+      - name: Tests (Windows)
         if: matrix.os == 'windows-latest'
         run: python -m pytest -q --disable-warnings
 
-      # ---- Coverage upload (Ubuntu only) ----
+      # ---- Package build sanity (Ubuntu; only if pyproject exists) ----
+      - name: Package build sanity
+        if: matrix.os == 'ubuntu-latest'
+        shell: bash
+        run: |
+          if [ -f pyproject.toml ]; then
+            python -m pip install build twine
+            python -m build
+            twine check dist/*
+          else
+            echo "No pyproject.toml; skipping build."
+          fi
+
+      # ---- Coverage upload ----
       - name: Ensure coverage file exists
         if: matrix.os == 'ubuntu-latest' && always()
         shell: bash
-        run: |
-          if [ ! -f coverage.xml ]; then echo "<coverage></coverage>" > coverage.xml; fi
+        run: if [ ! -f coverage.xml ]; then echo "<coverage></coverage>" > coverage.xml; fi
 
       - name: Upload coverage to Codecov
         if: matrix.os == 'ubuntu-latest'
