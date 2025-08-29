@@ -39,7 +39,7 @@ jobs:
           if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
             pip install pre-commit pytest-cov black codecov
           fi
-          # Only install package if pyproject exists on this branch
+          # Only install package if pyproject exists
           if [ -f pyproject.toml ]; then
             pip install -e .
           else
@@ -53,10 +53,12 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p docs/examples out
-          # Use repo samples, else generate tiny sample
+
+          # Use repo examples if present, otherwise create minimal ones
           if [[ -f docs/examples/in.csv && -f docs/examples/schema.yaml ]]; then
-            echo "Using repo examples."
+            echo "Using repo examples in docs/examples/."
           else
+            echo "Generating minimal examples (in.csv + schema.yaml)."
             printf "%s\n" \
               "entity,dept,month,amount,flag" \
               "A,Ops,2025-06-01,1200.25,true" \
@@ -97,12 +99,13 @@ jobs:
             exit 1
           fi
 
+          # Validate output (note the indentation of the heredoc body + terminator)
           python - <<'PY'
-import pyarrow.parquet as pq
-t = pq.read_table("out/test.parquet")
-assert t.num_rows > 0, "no rows written"
-print("csv2pq smoke OK: rows=", t.num_rows, "cols=", len(t.schema))
-PY
+          import pyarrow.parquet as pq
+          t = pq.read_table("out/test.parquet")
+          assert t.num_rows > 0, "no rows written"
+          print("csv2pq smoke OK: rows=", t.num_rows, "cols=", len(t.schema))
+          PY
 
       # ---- Ubuntu-only fixers/lint ----
       - name: Format (black)
