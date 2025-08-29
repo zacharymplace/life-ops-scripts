@@ -70,7 +70,8 @@ pip install -r requirements-dev.txt
 Convert CSV to Parquet with optional schema, Arrow dtypes, compression, and index control.
 
 ```
-python scripts/csv2pq.py docs/examples/in.csv docs/examples/out.parquet \
+pip install -e .
+csv2pq docs/examples/in.csv docs/examples/out.parquet \
   --schema docs/examples/schema.yaml \
   --dtype-backend pyarrow \
   --compression zstd \
