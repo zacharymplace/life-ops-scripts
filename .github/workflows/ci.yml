@@ -34,8 +34,12 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
           python -m pip install pytest
-          # Install your package so the csv2pq CLI is available
-          pip install -e .
+          # Install your package only when packaging config exists
+          if [ -f pyproject.toml ] || [ -f setup.py ]; then
+            pip install -e .
+          else
+            echo "No pyproject/setup.py found; skipping editable install."
+          fi
           # Ubuntu: add tooling for lint/coverage
           if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
             python -m pip install pre-commit pytest-cov black codecov
@@ -70,8 +74,17 @@ jobs:
               > docs/examples/schema.yaml
           fi
 
-          # Run converter via console script
-          csv2pq docs/examples/in.csv out/test.parquet \
+          # Pick runner: CLI if installed; else src/ path; else legacy scripts/
+          if command -v csv2pq >/dev/null 2>&1; then
+            RUNNER=(csv2pq)
+          elif [ -f src/life_ops_scripts/csv2pq.py ]; then
+            RUNNER=(python src/life_ops_scripts/csv2pq.py)
+          else
+            RUNNER=(python scripts/csv2pq.py)
+          fi
+
+          # Run converter
+          "${RUNNER[@]}" docs/examples/in.csv out/test.parquet \
             --schema docs/examples/schema.yaml \
             --dtype-backend pyarrow \
             --compression zstd \
