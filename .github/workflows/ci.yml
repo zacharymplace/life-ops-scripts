@@ -25,25 +25,23 @@ jobs:
           cache-dependency-path: |
             requirements-dev.txt
             requirements.txt
+            pyproject.toml
 
       - name: Install deps
         shell: bash
         run: |
           python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
           python -m pip install pytest
+          # Install your package so the csv2pq CLI is available
+          pip install -e .
           # Ubuntu: add tooling for lint/coverage
           if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
             python -m pip install pre-commit pytest-cov black codecov
           fi
 
       # ---- csv2pq smoke test (Ubuntu-only) ----
-      - name: Install csv2pq runtime deps (Ubuntu)
-        if: matrix.os == 'ubuntu-latest'
-        shell: bash
-        run: |
-          python -m pip install pandas pyarrow pyyaml click
-
       - name: csv2pq smoke (Ubuntu)
         if: matrix.os == 'ubuntu-latest'
         shell: bash
@@ -63,6 +61,7 @@ jobs:
               "B,Fin,2025-06-01,900.0,true" \
               "B,Fin,2025-07-01,950.5,false" \
               > docs/examples/in.csv
+
             printf "%s\n" \
               "entity: string" \
               "dept: string" \
@@ -72,35 +71,37 @@ jobs:
               > docs/examples/schema.yaml
           fi
 
-          # Convert
-          python scripts/csv2pq.py docs/examples/in.csv out/test.parquet \
+          # Run converter via console script
+          csv2pq docs/examples/in.csv out/test.parquet \
             --schema docs/examples/schema.yaml \
             --dtype-backend pyarrow \
             --compression zstd \
             --no-index
 
-          # Validate (single-line to avoid YAML heredoc quirks)
-          python -c "import pyarrow.parquet as pq; t=pq.read_table('out/test.parquet'); assert t.num_rows>0, 'no rows written'; print('csv2pq smoke OK: rows=', t.num_rows, 'cols=', len(t.schema))"
+          # Validate output
+          python - <<'PY'
+import pyarrow.parquet as pq
+t = pq.read_table("out/test.parquet")
+assert t.num_rows > 0, "no rows written"
+print("csv2pq smoke OK: rows=", t.num_rows, "cols=", len(t.schema))
+PY
 
       # ---- Ubuntu-only fixers ----
       - name: Format (black)
         if: matrix.os == 'ubuntu-latest'
         shell: bash
-        run: |
-          black .
+        run: black .
 
       - name: Update README TOC (doctoc)
         if: matrix.os == 'ubuntu-latest'
         shell: bash
-        run: |
-          pre-commit run doctoc --all-files || true
+        run: pre-commit run doctoc --all-files || true
 
       # ---- Ubuntu-only lint (skip the fixers that already modified files) ----
       - name: Lint (pre-commit, skip black & doctoc)
         if: matrix.os == 'ubuntu-latest'
         shell: bash
-        run: |
-          SKIP=black,doctoc pre-commit run --all-files
+        run: SKIP=black,doctoc pre-commit run --all-files
 
       # ---- Tests ----
       - name: Test with coverage (Ubuntu)
@@ -109,13 +110,13 @@ jobs:
         run: |
           pytest -q --disable-warnings \
             --cov=scripts \
+            --cov=life_ops_scripts \
             --cov-report=xml:coverage.xml \
             --cov-report=term-missing
 
       - name: Test (Windows)
         if: matrix.os == 'windows-latest'
-        run: |
-          python -m pytest -q --disable-warnings
+        run: python -m pytest -q --disable-warnings
 
       # ---- Coverage upload (Ubuntu only) ----
       - name: Ensure coverage file exists
