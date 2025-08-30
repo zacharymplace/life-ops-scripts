@@ -56,9 +56,10 @@ def main() -> int:
     args.outdir.mkdir(parents=True, exist_ok=True)
     outpath = args.outdir / "tiller_normalized.csv"
 
-    with args.infile.open("r", newline="", encoding="utf-8") as f_in, outpath.open(
-        "w", newline="", encoding="utf-8"
-    ) as f_out:
+    with (
+        args.infile.open("r", newline="", encoding="utf-8") as f_in,
+        outpath.open("w", newline="", encoding="utf-8") as f_out,
+    ):
         r = csv.DictReader(f_in)
         w = csv.DictWriter(f_out, fieldnames=FIELDS)
         w.writeheader()
