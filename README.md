@@ -63,6 +63,10 @@ python -m venv .venv && source .venv/bin/activate
 pip install -r requirements-dev.txt
 # (optional if you add a runtime requirements.txt later)
 # pip install -r requirements.txt
+
+# install your package locally to get the `csv2pq` CLI
+pip install -e .
+csv2pq --help
 ```
 
 ### CSV → Parquet (`csv2pq`)
@@ -117,19 +121,18 @@ Outputs: `out/cash_monthly_rollup.csv` (or `cash_weekly_rollup.csv`) with inflow
 
 ```
 ├─ README.md
-├─ scripts/
-│  ├─ csv2pq.py          → CSV → Parquet CLI
-│  ├─ generate_examples.py
-│  └─ python/            → finance utilities
+├─ src/
+│  └─ life_ops_scripts/
+│     ├─ __init__.py
+│     └─ csv2pq.py          → CSV → Parquet CLI
+├─ scripts/                  → (legacy helpers / stubs)
+│  └─ index_patches.py       → no-op stub for Pages
 ├─ docs/
-│  └─ examples/          → sample CSV/Parquet + schema
+│  └─ examples/              → sample CSV/Parquet + schema
 ├─ data/
-│  └─ samples/           → demo input data
-├─ tests/                → unit & integration tests
-├─ .github/
-│  ├─ workflows/         → ci.yml, deploy.yml, link-check.yml
-│  ├─ ISSUE_TEMPLATE/
-│  └─ PULL_REQUEST_TEMPLATE.md
+│  └─ samples/
+├─ tests/
+├─ .github/workflows/        → ci.yml, deploy.yml, pages.yml, path-guard.yml
 ├─ .gitignore
 ├─ .gitattributes
 ├─ LICENSE
@@ -192,6 +195,7 @@ Tagged releases build and publish automatically.
 
 - **Releases:** <https://github.com/zacharymplace/life-ops-scripts/releases>
 - **Actions (CI):** <https://github.com/zacharymplace/life-ops-scripts/actions>
+- **Patch Index (Pages):** <https://zacharymplace.github.io/life-ops-scripts/patch_index.md>
 
 ---
 
