@@ -1,8 +1,9 @@
 name: Bowtie
+
 on:
   workflow_dispatch:
   schedule:
-    - cron: '17 15 * * 1-5'  # weekdays 15:17 UTC (adjust as you like)
+    - cron: '17 15 * * 1-5'  # Mon–Fri 15:17 UTC
 
 permissions:
   contents: write
@@ -14,16 +15,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          token: ${{ secrets.BOWTIE_PAT || github.token }}
           fetch-depth: 0
 
       - name: Heartbeat (guaranteed change)
-        run: echo "last-run: $(date -u +'%Y-%m-%dT%H:%M:%SZ')" > .bowtie_heartbeat.txt
+        shell: bash
+        run: |
+          echo "last-run: $(date -u +'%Y-%m-%dT%H:%M:%SZ')" > .bowtie_heartbeat.txt
 
       - name: Create or update PR
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.BOWTIE_PAT || github.token }}
           branch: bowtie/heartbeat
           base: main
           title: "bowtie: automated update"
