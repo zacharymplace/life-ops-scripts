@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "life-ops-scripts"
+version = "0.1.5"
+description = "Automations for daily life — budgeting helpers, home integrations, media utilities."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Z$", email = "zacharymplace@users.noreply.github.com" }]
+dependencies = [
+  "pandas>=2.2",
+  "pyarrow>=14",
+  "PyYAML>=6",
+  "click>=8.1",
+]
+
+[project.scripts]
+csv2pq = "life_ops_scripts.csv2pq:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/life_ops_scripts"]
+
+[tool.hatch.build]
+include = [
+  "src/life_ops_scripts/**",
+  "README.md",
+  "LICENSE",
+]
