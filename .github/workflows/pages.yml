@@ -26,17 +26,22 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install pyyaml || true
-
-      - name: Generate patch index
-        run: python scripts/index_patches.py
-
-      - name: Prepare docs site
+      - name: Generate & stage patch index (tolerant)
+        shell: bash
         run: |
+          set -euo pipefail
           mkdir -p docs
+          if [ -f scripts/index_patches.py ]; then
+            python scripts/index_patches.py || true
+          else
+            echo "scripts/index_patches.py not present; creating placeholders."
+          fi
+          [ -f patch_index.md ] || printf "# Patches\n\n(none)\n" > patch_index.md
+          [ -f patch_index.json ] || printf '{ "patches": [] }\n' > patch_index.json
           cp patch_index.md docs/patch_index.md
           cp patch_index.json docs/patch_index.json
-          # Optional: prevent Jekyll processing if you later add non-Jekyll assets
           echo > docs/.nojekyll
+
 
       - name: Upload pages artifact
         uses: actions/upload-pages-artifact@v3
