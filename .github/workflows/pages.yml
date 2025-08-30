@@ -26,6 +26,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install pyyaml || true
+      
       - name: Generate & stage patch index (tolerant)
         shell: bash
         run: |
@@ -41,7 +42,6 @@ jobs:
           cp patch_index.md docs/patch_index.md
           cp patch_index.json docs/patch_index.json
           echo > docs/.nojekyll
-
 
       - name: Upload pages artifact
         uses: actions/upload-pages-artifact@v3
