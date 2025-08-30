@@ -8,7 +8,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
-  issues: write  # needed if we auto-create labels
+  issues: write  # required for label creation
 
 jobs:
   bowtie:
@@ -22,7 +22,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Make sure labels exist so labeling doesn't error out
+      # Ensure labels exist (tolerant)
       - name: Ensure labels exist (tolerant)
         env:
           GH_TOKEN: ${{ secrets.BOWTIE_PAT }}
@@ -50,7 +50,7 @@ jobs:
           add-paths: .bowtie_heartbeat.txt
           delete-branch: true
 
-      # Queue auto-merge (respects branch protection; it will wait for checks)
+      # Queue auto-merge (respects branch protection; waits for checks)
       - name: Auto-merge (squash) when eligible
         if: steps.cpr.outputs.pull-request-number != ''
         env:
