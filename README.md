@@ -22,6 +22,9 @@
   <a href="LICENSE">
     <img src="https://img.shields.io/github/license/zacharymplace/life-ops-scripts" alt="License: MIT" />
   </a>
+  <a href="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/pages.yml">
+    <img src="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/pages.yml/badge.svg?branch=main" alt="Pages" />
+  </a>
 </p>
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
