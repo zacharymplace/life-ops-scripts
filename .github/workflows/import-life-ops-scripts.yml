@@ -1,0 +1,33 @@
+name: Import Life Ops Scripts Patches
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 7 * * *"  # daily at 07:17 UTC
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch patch index from life-ops-scripts Pages
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://zacharymplace.github.io/life-ops-scripts"
+          mkdir -p docs/external/life-ops-scripts
+          curl -fsSL "$base/patch_index.md"   -o docs/external/life-ops-scripts/patch_index.md
+          curl -fsSL "$base/patch_index.json" -o docs/external/life-ops-scripts/patch_index.json
+          printf "\n\n_Last synced: %s_\n" "$(date -u '+%Y-%m-%d %H:%M UTC')" >> docs/external/life-ops-scripts/patch_index.md
+
+      - name: Commit files
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs: sync life-ops-scripts patch index"
+          file_pattern: docs/external/life-ops-scripts/*
