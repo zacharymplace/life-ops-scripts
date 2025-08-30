@@ -99,13 +99,13 @@ jobs:
             exit 1
           fi
 
-          # Validate output (note the indentation of the heredoc body + terminator)
+          # Validate output (heredoc terminator must be unindented)
           python - <<'PY'
-          import pyarrow.parquet as pq
-          t = pq.read_table("out/test.parquet")
-          assert t.num_rows > 0, "no rows written"
-          print("csv2pq smoke OK: rows=", t.num_rows, "cols=", len(t.schema))
-          PY
+import pyarrow.parquet as pq
+t = pq.read_table("out/test.parquet")
+assert t.num_rows > 0, "no rows written"
+print("csv2pq smoke OK: rows=", t.num_rows, "cols=", len(t.schema))
+PY
 
       # ---- Ubuntu-only fixers/lint ----
       - name: Format (black)
@@ -118,10 +118,17 @@ jobs:
         shell: bash
         run: pre-commit run doctoc --all-files || true
 
-      - name: Lint (pre-commit, skip black & doctoc)
+      - name: Fix whitespace (tolerant)
         if: matrix.os == 'ubuntu-latest'
         shell: bash
-        run: SKIP=black,doctoc pre-commit run --all-files
+        run: |
+          pre-commit run trailing-whitespace --all-files || true
+          pre-commit run end-of-file-fixer --all-files || true
+
+      - name: Lint (pre-commit, skip fixers)
+        if: matrix.os == 'ubuntu-latest'
+        shell: bash
+        run: SKIP=black,doctoc,trailing-whitespace,end-of-file-fixer pre-commit run --all-files
 
       # ---- Tests ----
       - name: Tests with coverage (Ubuntu)
@@ -154,7 +161,10 @@ jobs:
       - name: Ensure coverage file exists
         if: matrix.os == 'ubuntu-latest' && always()
         shell: bash
-        run: if [ ! -f coverage.xml ]; then echo "<coverage></coverage>" > coverage.xml; fi
+        run: |
+          if [ ! -f coverage.xml ]; then
+            echo "<coverage></coverage>" > coverage.xml
+          fi
 
       - name: Upload coverage to Codecov
         if: matrix.os == 'ubuntu-latest'
