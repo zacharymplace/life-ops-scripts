@@ -1,0 +1,35 @@
+name: Bowtie
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.BOWTIE_PAT }}   # gh CLI will pick this up automatically
+    steps:
+      - name: Checkout with PAT (so pushes trigger downstream workflows)
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.BOWTIE_PAT }}
+
+      - name: Configure git identity
+        run: |
+          git config user.name  "bowtie-bot"
+          git config user.email "zacharymplace@users.noreply.github.com"
+
+      # … do your edits / generate files …
+
+      - name: Push changes back
+        run: |
+          git checkout -b bowtie/update-$(date +%Y%m%d-%H%M%S)
+          git add -A
+          git commit -m "bowtie: automated update"
+          git push --set-upstream origin HEAD
+
+      - name: Open PR with gh (uses GH_TOKEN)
+        run: |
+          gh pr create --fill --base main || echo "PR already exists or nothing to change"
