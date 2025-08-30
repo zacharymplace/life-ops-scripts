@@ -12,24 +12,47 @@ permissions:
 jobs:
   bowtie:
     runs-on: ubuntu-latest
+    concurrency:
+      group: bowtie
+      cancel-in-progress: true
+
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      # Make sure labels exist so labeling won't error
+      - name: Ensure labels exist (tolerant)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh label create automation -d "Automated change" -c "#0366d6" || true
+          gh label create bowtie     -d "Bowtie automation" -c "#5319e7" || true
+
       - name: Heartbeat (guaranteed change)
         shell: bash
-        run: |
-          echo "last-run: $(date -u +'%Y-%m-%dT%H:%M:%SZ')" > .bowtie_heartbeat.txt
+        run: echo "last-run: $(date -u +'%Y-%m-%dT%H:%M:%SZ')" > .bowtie_heartbeat.txt
 
       - name: Create or update PR
+        id: cpr
         uses: peter-evans/create-pull-request@v6
         with:
+          # If PR creation is blocked for GITHUB_TOKEN, set repo secret BOWTIE_PAT and switch the next line to:
+          # token: ${{ secrets.BOWTIE_PAT }}
           branch: bowtie/heartbeat
           base: main
           title: "bowtie: automated update"
           commit-message: "bowtie: update heartbeat"
           body: "Automated change produced by Bowtie workflow."
-          labels: automation,bowtie
-          add-paths: |
-            .bowtie_heartbeat.txt
+          labels: |
+            automation
+            bowtie
+          add-paths: .bowtie_heartbeat.txt
+          delete-branch: true
+
+      # Queue an auto-merge (respects branch protection; merges when requirements pass)
+      - name: Auto-merge (squash) when eligible
+        if: steps.cpr.outputs.pull-request-number != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh pr merge ${{ steps.cpr.outputs['pull-request-number'] }} --squash --auto
