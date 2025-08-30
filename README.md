@@ -200,6 +200,11 @@ Tagged releases build and publish automatically.
 - **Actions (CI):** <https://github.com/zacharymplace/life-ops-scripts/actions>
 - **Patch Index (Pages):** <https://zacharymplace.github.io/life-ops-scripts/patch_index.md>
 
+**Patch Index (live):**
+- Markdown → https://zacharymplace.github.io/life-ops-scripts/patch_index.md
+- JSON → https://zacharymplace.github.io/life-ops-scripts/patch_index.json
+- Mirrored in **learning-hub** → `docs/external/life-ops-scripts/patch_index.md`
+
 ---
 
 ## 📜 License
