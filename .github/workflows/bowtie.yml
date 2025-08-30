@@ -1,35 +1,34 @@
 name: Bowtie
-
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
+  schedule:
+    - cron: '17 15 * * 1-5'  # weekdays 15:17 UTC (adjust as you like)
+
+permissions:
+  contents: write
+  pull-requests: write
 
 jobs:
-  run:
+  bowtie:
     runs-on: ubuntu-latest
-    env:
-      GH_TOKEN: ${{ secrets.BOWTIE_PAT }}   # gh CLI will pick this up automatically
     steps:
-      - name: Checkout with PAT (so pushes trigger downstream workflows)
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
-          token: ${{ secrets.BOWTIE_PAT }}
+          token: ${{ secrets.BOWTIE_PAT || github.token }}
+          fetch-depth: 0
 
-      - name: Configure git identity
-        run: |
-          git config user.name  "bowtie-bot"
-          git config user.email "zacharymplace@users.noreply.github.com"
+      - name: Heartbeat (guaranteed change)
+        run: echo "last-run: $(date -u +'%Y-%m-%dT%H:%M:%SZ')" > .bowtie_heartbeat.txt
 
-      # … do your edits / generate files …
-
-      - name: Push changes back
-        run: |
-          git checkout -b bowtie/update-$(date +%Y%m%d-%H%M%S)
-          git add -A
-          git commit -m "bowtie: automated update"
-          git push --set-upstream origin HEAD
-
-      - name: Open PR with gh (uses GH_TOKEN)
-        run: |
-          gh pr create --fill --base main || echo "PR already exists or nothing to change"
+      - name: Create or update PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.BOWTIE_PAT || github.token }}
+          branch: bowtie/heartbeat
+          base: main
+          title: "bowtie: automated update"
+          commit-message: "bowtie: update heartbeat"
+          body: "Automated change produced by Bowtie workflow."
+          labels: automation,bowtie
+          add-paths: |
+            .bowtie_heartbeat.txt
