@@ -101,11 +101,11 @@ jobs:
 
           # Validate output (heredoc terminator must be unindented)
           python - <<'PY'
-import pyarrow.parquet as pq
-t = pq.read_table("out/test.parquet")
-assert t.num_rows > 0, "no rows written"
-print("csv2pq smoke OK: rows=", t.num_rows, "cols=", len(t.schema))
-PY
+          import pyarrow.parquet as pq
+          t = pq.read_table("out/test.parquet")
+          assert t.num_rows > 0, "no rows written"
+          print("csv2pq smoke OK: rows=", t.num_rows, "cols=", len(t.schema))
+          PY
 
       # ---- Ubuntu-only fixers/lint ----
       - name: Format (black)
