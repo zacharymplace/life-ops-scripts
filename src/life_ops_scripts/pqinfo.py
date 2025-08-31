@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 import json
-from typing import Optional, Any
+from typing import Any, Optional
 
 import click
 import pyarrow.parquet as pq
