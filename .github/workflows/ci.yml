@@ -48,7 +48,7 @@ jobs:
 
       # ---- csv2pq smoke test (Ubuntu-only) ----
       - name: csv2pq smoke (Ubuntu)
-        if: matrix.os == 'ubuntu-latest'
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         shell: bash
         run: |
           set -euo pipefail
@@ -99,7 +99,7 @@ jobs:
             exit 1
           fi
 
-          # Validate output (heredoc terminator must be unindented)
+          # Validate output
           python - <<'PY'
           import pyarrow.parquet as pq
           t = pq.read_table("out/test.parquet")
@@ -108,35 +108,35 @@ jobs:
           PY
 
       - name: pqinfo smoke (Ubuntu)
-        if: matrix.os == 'ubuntu-latest'
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         run: pqinfo out/test.parquet --head 2
 
       # ---- Ubuntu-only fixers/lint ----
       - name: Format (black)
-        if: matrix.os == 'ubuntu-latest'
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         shell: bash
         run: black .
 
       - name: Update README TOC (doctoc)
-        if: matrix.os == 'ubuntu-latest'
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         shell: bash
         run: pre-commit run doctoc --all-files || true
 
       - name: Fix whitespace (tolerant)
-        if: matrix.os == 'ubuntu-latest'
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         shell: bash
         run: |
           pre-commit run trailing-whitespace --all-files || true
           pre-commit run end-of-file-fixer --all-files || true
 
       - name: Lint (pre-commit, skip fixers)
-        if: matrix.os == 'ubuntu-latest'
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         shell: bash
         run: SKIP=black,doctoc,trailing-whitespace,end-of-file-fixer pre-commit run --all-files
 
       # ---- Tests ----
       - name: Tests with coverage (Ubuntu)
-        if: matrix.os == 'ubuntu-latest'
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         shell: bash
         run: |
           pytest -q --disable-warnings \
@@ -145,12 +145,12 @@ jobs:
             --cov-report=term-missing
 
       - name: Tests (Windows)
-        if: matrix.os == 'windows-latest'
+        if: ${{ matrix.os == 'windows-latest' }}
         run: python -m pytest -q --disable-warnings
 
       # ---- Package build sanity (Ubuntu; only if pyproject exists) ----
       - name: Package build sanity
-        if: matrix.os == 'ubuntu-latest'
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         shell: bash
         run: |
           if [ -f pyproject.toml ]; then
@@ -163,7 +163,7 @@ jobs:
 
       # ---- Coverage upload ----
       - name: Ensure coverage file exists
-        if: matrix.os == 'ubuntu-latest' && always()
+        if: ${{ matrix.os == 'ubuntu-latest' && always() }}
         shell: bash
         run: |
           if [ ! -f coverage.xml ]; then
@@ -171,7 +171,7 @@ jobs:
           fi
 
       - name: Upload coverage to Codecov
-        if: matrix.os == 'ubuntu-latest'
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
@@ -180,7 +180,7 @@ jobs:
           fail_ci_if_error: false
 
       - name: Upload coverage artifact
-        if: matrix.os == 'ubuntu-latest' && always()
+        if: ${{ matrix.os == 'ubuntu-latest' && always() }}
         uses: actions/upload-artifact@v4
         with:
           name: coverage-ubuntu-py${{ matrix.python-version }}
