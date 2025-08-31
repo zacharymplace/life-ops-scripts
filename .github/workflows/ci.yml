@@ -35,7 +35,7 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
           pip install pytest
-          # Ubuntu: extra tools (add Ruff CLI here)
+          # Ubuntu-only extras (lint, format, coverage)
           if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
             pip install pre-commit pytest-cov black codecov ruff
           fi
@@ -48,7 +48,7 @@ jobs:
 
       # ---- csv2pq smoke test (Ubuntu-only) ----
       - name: csv2pq smoke (Ubuntu)
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: matrix.os == 'ubuntu-latest'
         shell: bash
         run: |
           set -euo pipefail
@@ -108,40 +108,41 @@ jobs:
           PY
 
       - name: pqinfo smoke (Ubuntu)
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: matrix.os == 'ubuntu-latest'
         run: pqinfo out/test.parquet --head 2
 
       # ---- Ubuntu-only lint/format ----
-      - name: Ruff (lint only)
-        if: ${{ matrix.os == 'ubuntu-latest' }}
-        shell: bash
-        run: ruff check .
+      - name: Lint (ruff, no fixes)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          ruff --version
+          ruff check . --output-format=github
 
       - name: Format (black)
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: matrix.os == 'ubuntu-latest'
         shell: bash
         run: black .
 
       - name: Update README TOC (doctoc)
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: matrix.os == 'ubuntu-latest'
         shell: bash
         run: pre-commit run doctoc --all-files || true
 
       - name: Fix whitespace (tolerant)
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: matrix.os == 'ubuntu-latest'
         shell: bash
         run: |
           pre-commit run trailing-whitespace --all-files || true
           pre-commit run end-of-file-fixer --all-files || true
 
       - name: Lint (pre-commit, skip fixers & ruff)
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: matrix.os == 'ubuntu-latest'
         shell: bash
-        run: SKIP=black,doctoc,trailing-whitespace,end-of-file-fixer,ruff pre-commit run --all-files
+        run: SKIP=ruff,black,doctoc,trailing-whitespace,end-of-file-fixer pre-commit run --all-files
 
       # ---- Tests ----
       - name: Tests with coverage (Ubuntu)
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: matrix.os == 'ubuntu-latest'
         shell: bash
         run: |
           pytest -q --disable-warnings \
@@ -150,12 +151,12 @@ jobs:
             --cov-report=term-missing
 
       - name: Tests (Windows)
-        if: ${{ matrix.os == 'windows-latest' }}
+        if: matrix.os == 'windows-latest'
         run: python -m pytest -q --disable-warnings
 
       # ---- Package build sanity (Ubuntu; only if pyproject exists) ----
       - name: Package build sanity
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: matrix.os == 'ubuntu-latest'
         shell: bash
         run: |
           if [ -f pyproject.toml ]; then
@@ -176,7 +177,7 @@ jobs:
           fi
 
       - name: Upload coverage to Codecov
-        if: ${{ matrix.os == 'ubuntu-latest' }}
+        if: matrix.os == 'ubuntu-latest'
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
