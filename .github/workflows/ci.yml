@@ -35,9 +35,9 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
           pip install pytest
-          # Ubuntu: extra tools
+          # Ubuntu: extra tools (add Ruff CLI here)
           if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
-            pip install pre-commit pytest-cov black codecov
+            pip install pre-commit pytest-cov black codecov ruff
           fi
           # Only install package if pyproject exists
           if [ -f pyproject.toml ]; then
@@ -111,7 +111,12 @@ jobs:
         if: ${{ matrix.os == 'ubuntu-latest' }}
         run: pqinfo out/test.parquet --head 2
 
-      # ---- Ubuntu-only fixers/lint ----
+      # ---- Ubuntu-only lint/format ----
+      - name: Ruff (lint only)
+        if: ${{ matrix.os == 'ubuntu-latest' }}
+        shell: bash
+        run: ruff check .
+
       - name: Format (black)
         if: ${{ matrix.os == 'ubuntu-latest' }}
         shell: bash
@@ -129,10 +134,10 @@ jobs:
           pre-commit run trailing-whitespace --all-files || true
           pre-commit run end-of-file-fixer --all-files || true
 
-      - name: Lint (pre-commit, skip fixers)
+      - name: Lint (pre-commit, skip fixers & ruff)
         if: ${{ matrix.os == 'ubuntu-latest' }}
         shell: bash
-        run: SKIP=black,doctoc,trailing-whitespace,end-of-file-fixer pre-commit run --all-files
+        run: SKIP=black,doctoc,trailing-whitespace,end-of-file-fixer,ruff pre-commit run --all-files
 
       # ---- Tests ----
       - name: Tests with coverage (Ubuntu)
