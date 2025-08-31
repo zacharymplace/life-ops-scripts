@@ -23,7 +23,7 @@ def inspect_parquet(path: Path) -> dict[str, Any]:
         "schema": [{"name": f.name, "type": str(f.type)} for f in schema],
     }
 
-    # Best-effort compressions for the first row group
+    # Best-effort: record compressions for the first row group
     try:
         if md and md.num_row_groups > 0:
             rg0 = md.row_group(0)
@@ -75,6 +75,7 @@ def collect_stats(md, schema) -> list[dict[str, Any]]:
                         entry["max"] = max(maxs, key=lambda x: str(x))
                 out.append(entry)
     except Exception:
+        # Stats are optional; ignore if unavailable
         pass
     return out
 
@@ -82,24 +83,11 @@ def collect_stats(md, schema) -> list[dict[str, Any]]:
 @click.command(context_settings={"show_default": True})
 @click.argument("path", type=click.Path(exists=True, dir_okay=False, path_type=Path))
 @click.option("--json", "as_json", is_flag=True, help="Emit machine-readable JSON.")
-@click.option(
-    "--summary", is_flag=True, help="Only print counts (rows, columns, row_groups)."
-)
+@click.option("--summary", is_flag=True, help="Only print counts (rows, columns, row_groups).")
 @click.option("--head", type=int, default=0, help="Print first N rows (reads data).")
 @click.option("-c", "--columns", help="Comma-separated column subset for --head.")
-@click.option(
-    "--stats",
-    is_flag=True,
-    help="Show per-column nulls/min/max from metadata (best-effort).",
-)
-def main(
-    path: Path,
-    as_json: bool,
-    summary: bool,
-    head: int,
-    columns: Optional[str],
-    stats: bool,
-) -> None:
+@click.option("--stats", is_flag=True, help="Show per-column nulls/min/max from metadata (best-effort).")
+def main(path: Path, as_json: bool, summary: bool, head: int, columns: Optional[str], stats: bool) -> None:
     """Show quick info about a Parquet file."""
     pf = pq.ParquetFile(str(path))
     md = pf.metadata
@@ -114,9 +102,7 @@ def main(
         return
 
     if summary:
-        click.echo(
-            f"rows={info['rows']} columns={info['columns']} row_groups={info['row_groups']}"
-        )
+        click.echo(f"rows={info['rows']} columns={info['columns']} row_groups={info['row_groups']}")
     else:
         click.echo(f"File: {info['path']}")
         click.echo(f"Rows: {info['rows']}")
@@ -143,7 +129,7 @@ def main(
             cols = [c.strip() for c in columns.split(",") if c.strip()]
         table = pq.read_table(str(path), columns=cols)
         try:
-
+            import pandas as pd  # pandas is already a dependency
             df = table.to_pandas().head(head)
             click.echo()
             click.echo(df.to_string(index=False))
