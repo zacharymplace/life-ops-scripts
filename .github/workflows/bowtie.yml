@@ -55,4 +55,4 @@ jobs:
         if: steps.cpr.outputs.pull-request-number != ''
         env:
           GH_TOKEN: ${{ secrets.BOWTIE_PAT }}
-        run: gh pr merge ${{ steps.cpr.outputs['pull-request-number'] }} --squash --auto
+        run: gh pr merge ${{ steps.cpr.outputs.pull-request-number }} --squash --auto
