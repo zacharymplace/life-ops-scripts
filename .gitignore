@@ -44,3 +44,4 @@ out/*.csv
 !examples/
 !examples/*.csv
 !examples/**/*.csv
+*.parquet
