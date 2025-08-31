@@ -44,13 +44,10 @@ jobs:
           title: "bowtie: automated update"
           commit-message: "bowtie: update heartbeat"
           body: "Automated change produced by Bowtie workflow."
-          labels: |
-            automation
-            bowtie
+          labels: automation,bowtie
           add-paths: .bowtie_heartbeat.txt
           delete-branch: true
 
-      # Queue auto-merge (respects branch protection; waits for checks)
       - name: Auto-merge (squash) when eligible
         if: steps.cpr.outputs.pull-request-number != ''
         env:
