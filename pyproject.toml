@@ -19,6 +19,7 @@ dependencies = [
 
 [project.scripts]
 csv2pq = "life_ops_scripts.csv2pq:main"
+pqinfo  = "life_ops_scripts.pqinfo:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/life_ops_scripts"]
