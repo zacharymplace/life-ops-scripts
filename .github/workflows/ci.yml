@@ -107,6 +107,10 @@ jobs:
           print("csv2pq smoke OK: rows=", t.num_rows, "cols=", len(t.schema))
           PY
 
+      - name: pqinfo smoke (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
+        run: pqinfo out/test.parquet --head 2
+
       # ---- Ubuntu-only fixers/lint ----
       - name: Format (black)
         if: matrix.os == 'ubuntu-latest'
