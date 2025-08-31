@@ -43,13 +43,11 @@ jobs:
           token: ${{ secrets.BOWTIE_PAT }}
           branch: bowtie/heartbeat
           base: main
-          title: bowtie: automated update
-          commit-message: bowtie: update heartbeat
+          title: "bowtie: automated update"
+          commit-message: "bowtie: update heartbeat"
           body: |
             Automated change produced by Bowtie workflow.
-          labels: |
-            automation
-            bowtie
+          labels: automation,bowtie
           add-paths: |
             .bowtie_heartbeat.txt
           delete-branch: true
