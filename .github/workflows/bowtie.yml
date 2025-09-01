@@ -8,7 +8,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
-  issues: write  # required for label creation
+  issues: write  # needed for label creation
 
 jobs:
   bowtie:
@@ -17,29 +17,29 @@ jobs:
       group: bowtie
       cancel-in-progress: true
 
+    # Prefer PAT; fall back to GITHUB_TOKEN so the workflow still runs
+    env:
+      GH_TOKEN: ${{ secrets.BOWTIE_PAT || github.token }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      # Ensure labels exist (tolerant)
       - name: Ensure labels exist (tolerant)
-        env:
-          GH_TOKEN: ${{ secrets.BOWTIE_PAT }}
         run: |
           gh label create automation --description "Automated change" --color "0366d6" || true
           gh label create bowtie     --description "Bowtie automation"  --color "5319e7" || true
 
       - name: Heartbeat (guaranteed change)
-        shell: bash
         run: echo "last-run: $(date -u +'%Y-%m-%dT%H:%M:%SZ')" > .bowtie_heartbeat.txt
 
       - name: Create or update PR
         id: cpr
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.BOWTIE_PAT }}
+          token: ${{ env.GH_TOKEN }}
           branch: bowtie/heartbeat
           base: main
           title: "bowtie: automated update"
@@ -51,9 +51,12 @@ jobs:
             .bowtie_heartbeat.txt
           delete-branch: true
 
-      # Queue auto-merge (respects branch protection; waits for checks)
+      - name: Log PR result
+        run: |
+          echo "PR number: ${{ steps.cpr.outputs['pull-request-number'] }}"
+          echo "PR url:    ${{ steps.cpr.outputs['pull-request-url'] }}"
+
+      # Only try auto-merge if a PR exists (and PAT has perms)
       - name: Auto-merge (squash) when eligible
-        if: ${{ steps.cpr.outputs['pull-request-number'] != '' }}
-        env:
-          GH_TOKEN: ${{ secrets.BOWTIE_PAT }}
+        if: ${{ steps.cpr.outputs['pull-request-number'] != '' && secrets.BOWTIE_PAT != '' }}
         run: gh pr merge ${{ steps.cpr.outputs['pull-request-number'] }} --squash --auto
