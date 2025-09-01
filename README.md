@@ -17,6 +17,9 @@
   <a href="https://github.com/zacharymplace/life-ops-scripts/issues?q=is%3Aissue+Stale+branches+report">
     <img src="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/stale-branches-report.yml/badge.svg?branch=main" alt="Stale Branches Report" />
   </a>
+  <a href="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/pip-audit.yml">
+  <img src="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/pip-audit.yml/badge.svg?branch=main" alt="pip-audit" />
+</a>
 
   <!-- Project Meta -->
   <a href="https://codecov.io/gh/zacharymplace/life-ops-scripts">
