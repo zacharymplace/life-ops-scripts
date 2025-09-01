@@ -52,3 +52,9 @@
   - chore
 "*.yaml":
   - chore
+"*.md":
+  - docs
+"*.yml":
+  - chore
+"*.yaml":
+  - chore
