@@ -19,6 +19,10 @@
 - [ ] README/docs updated (if user-visible)
 - [ ] Safe by default (dry-run/backup where relevant)
 
+- [ ] Breaking change?  
+  - [ ] YES → Document migration path in **Details**  
+  - [ ] NO
+
 ## Signals & Links
 - Labels auto-applied: `area:*`, `size:*` (via workflows)
 - Codecov comment will post coverage diff on this PR
