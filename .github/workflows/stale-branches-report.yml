@@ -13,7 +13,7 @@ jobs:
   report:
     runs-on: ubuntu-latest
     steps:
-      - name: Generate report
+        - name: Generate report
         id: gen
         uses: actions/github-script@v7
         with:
@@ -22,62 +22,66 @@ jobs:
             const repo  = context.repo.repo;
             const defaultBranch = (await github.rest.repos.get({ owner, repo })).data.default_branch;
 
-            // Helper: days between
+            // Only include branches with a PR merged into default > N days ago
+            const mergedOlderThanDays = 14;
+
+            // Helper
             const daysBetween = (a, b) => Math.floor((b - a) / 86400000);
-
-            // Get branches (first 200)
-            const branches = await github.paginate(github.rest.repos.listBranches, { owner, repo, per_page: 100 });
-
             const now = new Date();
-            const inactiveCutoffDays = 60;   // no commits in N days → stale
-            const stale = [];
 
+            // Fetch up to 200 branches
+            const branches = await github.paginate(
+              github.rest.repos.listBranches,
+              { owner, repo, per_page: 100 }
+            );
+
+            const stale = [];
             for (const br of branches) {
               const name = br.name;
               if (name === defaultBranch) continue;
 
-              // Last commit date
-              const sha = br.commit.sha;
-              const commit = (await github.rest.repos.getCommit({ owner, repo, ref: sha })).data;
-              const committed = new Date(commit.commit.committer.date);
-              const inactiveDays = daysBetween(committed, now);
-
-              // Find closed PRs from this branch; see if any were merged into default
+              // Find a closed, merged PR from this branch into default
               const prs = await github.paginate(github.rest.pulls.list, {
-                owner, repo, state: 'closed', per_page: 50, head: `${owner}:${name}`
+                owner, repo, state: 'closed', head: `${owner}:${name}`, per_page: 50
               });
-
               const mergedPR = prs.find(pr => pr.merged_at && pr.base.ref === defaultBranch);
-              const mergedAt = mergedPR ? new Date(mergedPR.merged_at) : null;
+              if (!mergedPR) continue;
 
-              // Mark stale if merged, or inactive too long
-              if (mergedPR || inactiveDays >= inactiveCutoffDays) {
-                stale.push({
-                  name,
-                  lastCommit: committed.toISOString().slice(0,10),
-                  inactiveDays,
-                  merged: !!mergedPR,
-                  mergedAt: mergedAt ? mergedAt.toISOString().slice(0,10) : null,
-                  prNumber: mergedPR?.number ?? null
-                });
-              }
+              const mergedAt = new Date(mergedPR.merged_at);
+              const age = daysBetween(mergedAt, now);
+              if (age <= mergedOlderThanDays) continue; // skip recent merges
+
+              // Last commit date for info (best-effort)
+              const sha = br.commit?.sha;
+              let lastCommitISO = "unknown";
+              try {
+                if (sha) {
+                  const commit = (await github.rest.repos.getCommit({ owner, repo, ref: sha })).data;
+                  lastCommitISO = commit.commit.committer.date.slice(0,10);
+                }
+              } catch {}
+
+              stale.push({
+                name,
+                mergedAt: mergedAt.toISOString().slice(0,10),
+                age,
+                prNumber: mergedPR.number
+              });
             }
 
             // Build markdown
-            let body = `## Stale Branches Report\n` +
+            let body = `## Stale Branches Report (merged > ${mergedOlderThanDays} days)\n` +
                        `Default branch: **${defaultBranch}**  \n` +
                        `Generated: ${now.toISOString().slice(0,10)}\n\n`;
 
             if (stale.length === 0) {
               body += `No stale branches found 🎉\n`;
             } else {
-              body += `| Branch | Status | Last Commit | Inactive (days) | PR | Delete |\n` +
-                      `|---|---|---:|---:|---|---|\n`;
+              body += `| Branch | Merged At | Age (days) | PR | Delete |\n` +
+                      `|---|---:|---:|---|---|\n`;
               for (const s of stale) {
-                const status = s.merged ? `**merged**${s.mergedAt ? ` (${s.mergedAt})` : ""}` : `inactive`;
-                const prLink = s.prNumber ? `#${s.prNumber}` : `–`;
                 const delURL = `https://github.com/${owner}/${repo}/branches/all?query=${encodeURIComponent(s.name)}`;
-                body += `| \`${s.name}\` | ${status} | ${s.lastCommit} | ${s.inactiveDays} | ${prLink} | [🗑️ delete](${delURL}) |\n`;
+                body += `| \`${s.name}\` | ${s.mergedAt} | ${s.age} | #${s.prNumber} | [🗑️ delete](${delURL}) |\n`;
               }
             }
 
