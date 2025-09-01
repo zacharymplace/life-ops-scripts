@@ -25,11 +25,10 @@ jobs:
             // Only include branches with a PR merged into default > N days ago
             const mergedOlderThanDays = 14;
 
-            // Helper
             const daysBetween = (a, b) => Math.floor((b - a) / 86400000);
             const now = new Date();
 
-            // Fetch up to 200 branches
+            // Fetch branches (paginate)
             const branches = await github.paginate(
               github.rest.repos.listBranches,
               { owner, repo, per_page: 100 }
@@ -50,16 +49,6 @@ jobs:
               const mergedAt = new Date(mergedPR.merged_at);
               const age = daysBetween(mergedAt, now);
               if (age <= mergedOlderThanDays) continue; // skip recent merges
-
-              // Last commit date for info (best-effort)
-              const sha = br.commit?.sha;
-              let lastCommitISO = "unknown";
-              try {
-                if (sha) {
-                  const commit = (await github.rest.repos.getCommit({ owner, repo, ref: sha })).data;
-                  lastCommitISO = commit.commit.committer.date.slice(0,10);
-                }
-              } catch {}
 
               stale.push({
                 name,
@@ -87,7 +76,7 @@ jobs:
 
             core.setOutput('body', body);
 
-      - name: Open or update issue
+      - name: Open dated report issue
         uses: actions/github-script@v7
         env:
           REPORT_BODY: ${{ toJSON(steps.gen.outputs.body) }}
@@ -95,23 +84,11 @@ jobs:
           script: |
             const owner = context.repo.owner;
             const repo  = context.repo.repo;
-            const title = "Stale branches report (weekly)";
-            const body  = JSON.parse(process.env.REPORT_BODY); // ✅ safe parse
+            const today = new Date().toISOString().slice(0,10);
+            const title = `Stale branches report — ${today}`;
+            const body  = JSON.parse(process.env.REPORT_BODY); // safe parse
 
-            // Find existing open issue with same title
-            const issues = await github.paginate(github.rest.issues.listForRepo, {
-              owner, repo, state: 'open', per_page: 50
+            const created = await github.rest.issues.create({
+              owner, repo, title, body, labels: ["automation"]
             });
-            const existing = issues.find(i => i.title === title);
-
-            if (existing) {
-              await github.rest.issues.update({
-                owner, repo, issue_number: existing.number, body
-              });
-              core.info(`Updated issue #${existing.number}`);
-            } else {
-              const created = await github.rest.issues.create({
-                owner, repo, title, body, labels: ["automation"]
-              });
-              core.info(`Created issue #${created.data.number}`);
-            }
+            core.info(`Created issue #${created.data.number}`);
