@@ -7,7 +7,6 @@ on:
 
 permissions:
   contents: read
-  security-events: write   # for SARIF upload
   actions: read
 
 jobs:
@@ -33,26 +32,31 @@ jobs:
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
-          # if you publish a package / have pyproject:
           if [ -f pyproject.toml ]; then pip install -e .; fi
 
       - name: Install pip-audit
         run: pip install pip-audit
 
-      - name: Audit dependencies → SARIF
-        # --strict makes the job fail on any vulnerability (good default)
-        # remove --strict if you prefer report-only
+      - name: Audit dependencies (JSON reports)
+        shell: bash
         run: |
           set -euo pipefail
-          pip-audit -r requirements.txt -f sarif -o pip-audit.sarif --strict || FAILED=$?
-          # Also audit the current environment (captures transitive/extra deps)
-          pip-audit -f sarif -o pip-audit-env.sarif || true
-          # Merge SARIFs (simple concat fallback)
-          jq -s '{version:"2.1.0", runs:(.[0].runs + .[1].runs)}' pip-audit.sarif pip-audit-env.sarif > pip-audit-merged.sarif || cp pip-audit.sarif pip-audit-merged.sarif
-          [ -z "${FAILED:-}" ] || exit $FAILED
-        shell: bash
+          FAILED=0
+          if [ -f requirements.txt ]; then
+            pip-audit -r requirements.txt -f json -o pip-audit-reqs.json --strict || FAILED=$?
+          else
+            echo '{}' > pip-audit-reqs.json
+          fi
+          # Also audit current env (captures transitive/extra deps); don't fail the job on this one
+          pip-audit -f json -o pip-audit-env.json || true
+          # Exit nonzero if the strict run found vulns
+          exit $FAILED
 
-      - name: Upload SARIF to Code Scanning
-        uses: github/codeql-action/upload-sarif@v3
+      - name: Upload audit artifacts
+        uses: actions/upload-artifact@v4
         with:
-          sarif_file: pip-audit-merged.sarif
+          name: pip-audit-reports
+          path: |
+            pip-audit-reqs.json
+            pip-audit-env.json
+          if-no-files-found: warn
