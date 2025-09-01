@@ -18,6 +18,7 @@ jobs:
       cancel-in-progress: true
 
     env:
+      # Prefer PAT; fall back to built-in GitHub token so workflow still runs
       GH_TOKEN: ${{ secrets.BOWTIE_PAT || github.token }}
 
     steps:
@@ -35,6 +36,17 @@ jobs:
         shell: bash
         run: |
           echo "last-run: $(date -u +'%Y-%m-%dT%H:%M:%SZ')" > .bowtie_heartbeat.txt
+
+      # Determine if PAT is available; expose as output for use in 'if:'
+      - name: Check PAT presence
+        id: patcheck
+        shell: bash
+        run: |
+          if [ -n "${{ secrets.BOWTIE_PAT }}" ]; then
+            echo "has_pat=true"  >> "$GITHUB_OUTPUT"
+          else
+            echo "has_pat=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Create or update PR
         id: cpr
@@ -58,6 +70,7 @@ jobs:
           echo "PR number: ${{ steps.cpr.outputs['pull-request-number'] }}"
           echo "PR url:    ${{ steps.cpr.outputs['pull-request-url'] }}"
 
+      # Only auto-merge when a PR exists AND a PAT is present
       - name: Auto-merge (squash) when eligible
-        if: ${{ steps.cpr.outputs['pull-request-number'] != '' && secrets.BOWTIE_PAT != '' }}
+        if: ${{ steps.cpr.outputs['pull-request-number'] != '' && steps.patcheck.outputs.has_pat == 'true' }}
         run: gh pr merge ${{ steps.cpr.outputs['pull-request-number'] }} --squash --auto
