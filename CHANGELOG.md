@@ -4,6 +4,9 @@ All notable changes to this project will be documented here.
 The format is based on **Keep a Changelog**, and this project adheres to **Semantic Versioning**.
 
 ## [Unreleased]
+### Breaking Changes
+- (placeholder) Describe migrations or incompatible changes
+
 ### Added
 - (placeholder) `--output-format` for rollup (CSV/JSON)
 - (placeholder) `--week-start {monday|sunday}`
@@ -17,6 +20,9 @@ The format is based on **Keep a Changelog**, and this project adheres to **Seman
 ---
 
 ## [v0.1.7] - 2025-09-01
+### Breaking Changes
+- None
+
 ### Added
 - CI: release-assets workflow confirmed stable, auto-attaches `out/` ZIP + SHA256 on tags
 
@@ -32,6 +38,9 @@ The format is based on **Keep a Changelog**, and this project adheres to **Seman
 ---
 
 ## [v0.1.6] - 2025-08-28
+### Breaking Changes
+- None
+
 ### Added
 - Release v0.1.6 published with attached assets
 - CI workflow verified: `life-ops-scripts-v0.1.6.zip` + `.sha256` auto-generated
@@ -39,6 +48,9 @@ The format is based on **Keep a Changelog**, and this project adheres to **Seman
 ---
 
 ## [v0.1.5] - 2025-08-27
+### Breaking Changes
+- None
+
 ### Added
 - `csv2pq`: dtype-backend, compression, index flags
 - Add pyarrow dependency
@@ -49,6 +61,9 @@ The format is based on **Keep a Changelog**, and this project adheres to **Seman
 ---
 
 ## [v0.1.4] - 2025-08-27
+### Breaking Changes
+- None
+
 ### Added
 - `csv2pq.py` CLI
 - `generate_examples.py` and example datasets (`in.csv`, `schema.yaml`)
@@ -65,6 +80,9 @@ The format is based on **Keep a Changelog**, and this project adheres to **Seman
 ---
 
 ## [v0.1.3] - 2025-08-27
+### Breaking Changes
+- None
+
 ### Added
 - Add `cash_flow_rollup` edge case tests (weekly W–SUN)
 - Add `pytest.ini` for repo-root import discovery
@@ -78,6 +96,9 @@ The format is based on **Keep a Changelog**, and this project adheres to **Seman
 ---
 
 ## [v0.1.2] - 2025-08-24
+### Breaking Changes
+- None
+
 ### Added
 - CI: OS/Python matrix (ubuntu & windows; 3.11 & 3.12)
 - Codecov integration + coverage upload
@@ -91,6 +112,9 @@ The format is based on **Keep a Changelog**, and this project adheres to **Seman
 ---
 
 ## [v0.1.1] - 2025-08-24
+### Breaking Changes
+- None
+
 ### Added
 - `cash_flow_rollup.py` (weekly/monthly) with sample data and a smoke test
 - `docs/MAINTAINERS.md` with PR + release checklists
@@ -109,6 +133,9 @@ The format is based on **Keep a Changelog**, and this project adheres to **Seman
 ---
 
 ## [v0.1.0] - 2025-08-24
+### Breaking Changes
+- None
+
 ### Added
 - Initial repo structure, governance docs (CONTRIBUTING, SECURITY, ADR template)
 - Actions templates and basic CI
