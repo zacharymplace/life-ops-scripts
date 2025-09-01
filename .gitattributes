@@ -26,3 +26,4 @@ examples/**/*.csv        text eol=lf
 
 # Data files treated as binary
 *.parquet                binary
+*.csv text eol=lf
