@@ -29,12 +29,11 @@ jobs:
           GH_TOKEN: ${{ secrets.BOWTIE_PAT }}
         run: |
           gh label create automation --description "Automated change" --color "0366d6" || true
-          gh label create bowtie     --description "Bowtie automation" --color "5319e7" || true
+          gh label create bowtie     --description "Bowtie automation"  --color "5319e7" || true
 
       - name: Heartbeat (guaranteed change)
         shell: bash
-        run: |
-          echo "last-run: $(date -u +'%Y-%m-%dT%H:%M:%SZ')" > .bowtie_heartbeat.txt
+        run: echo "last-run: $(date -u +'%Y-%m-%dT%H:%M:%SZ')" > .bowtie_heartbeat.txt
 
       - name: Create or update PR
         id: cpr
@@ -52,6 +51,7 @@ jobs:
             .bowtie_heartbeat.txt
           delete-branch: true
 
+      # Queue auto-merge (respects branch protection; waits for checks)
       - name: Auto-merge (squash) when eligible
         if: ${{ steps.cpr.outputs['pull-request-number'] != '' }}
         env:
