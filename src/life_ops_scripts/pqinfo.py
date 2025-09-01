@@ -138,7 +138,7 @@ def main(
                     parts.append(f"max={s['max']}")
                 click.echo(f"  - {s['name']}: " + " ".join(parts))
 
-    if head > 0:
+    ifif head > 0:
         cols = None
         if columns:
             cols = [c.strip() for c in columns.split(",") if c.strip()]
@@ -150,7 +150,6 @@ def main(
         except Exception:
             click.echo()
             click.echo(str(table.slice(0, head)))
-
 
 if __name__ == "__main__":
     main()
