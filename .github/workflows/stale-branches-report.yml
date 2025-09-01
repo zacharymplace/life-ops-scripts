@@ -76,7 +76,7 @@ jobs:
 
             core.setOutput('body', body);
 
-      - name: Open dated report issue
+      - name: Close previous reports and open new dated issue
         uses: actions/github-script@v7
         env:
           REPORT_BODY: ${{ toJSON(steps.gen.outputs.body) }}
@@ -85,10 +85,29 @@ jobs:
             const owner = context.repo.owner;
             const repo  = context.repo.repo;
             const today = new Date().toISOString().slice(0,10);
-            const title = `Stale branches report — ${today}`;
-            const body  = JSON.parse(process.env.REPORT_BODY); // safe parse
+            const titlePrefix = "Stale branches report";
+            const newTitle = `${titlePrefix} — ${today}`;
+            const body  = JSON.parse(process.env.REPORT_BODY);
 
+            // Find and close existing open stale branch reports
+            const openIssues = await github.paginate(github.rest.issues.listForRepo, {
+              owner, repo, state: 'open', per_page: 100, labels: 'automation'
+            });
+            const priorReports = openIssues.filter(i => i.title.startsWith(titlePrefix));
+
+            for (const issue of priorReports) {
+              if (issue.title === newTitle) continue;
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: issue.number,
+                body: `Superseded by **${newTitle}**. Closing this report.`
+              });
+              await github.rest.issues.update({
+                owner, repo, issue_number: issue.number, state: 'closed'
+              });
+            }
+
+            // Create the new dated report
             const created = await github.rest.issues.create({
-              owner, repo, title, body, labels: ["automation"]
+              owner, repo, title: newTitle, body, labels: ["automation"]
             });
             core.info(`Created issue #${created.data.number}`);
