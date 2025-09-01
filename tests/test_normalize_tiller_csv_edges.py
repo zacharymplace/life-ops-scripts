@@ -1,8 +1,8 @@
 # tests/test_normalize_tiller_csv_edges.py
-import io
 import pandas as pd
 import pytest
 from scripts.python.finance import normalize_tiller_csv as norm
+
 
 def test_normalize_tiller_handles_missing_columns(tmp_path):
     """Ensure normalize_tiller_csv gracefully handles missing headers."""
