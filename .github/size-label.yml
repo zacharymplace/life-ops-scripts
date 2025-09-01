@@ -1,0 +1,6 @@
+# Thresholds by total changed lines (additions + deletions)
+xs: 0     # 0–49 lines
+s: 50     # 50–199
+m: 200    # 200–499
+l: 500    # 500–999
+xl: 1000  # 1000+
