@@ -1,0 +1,5 @@
+[tool.pip-audit]
+ignore-vuln = [
+  # Example advisory IDs (replace with real ones):
+  # "PYSEC-2024-999",  # expires: 2025-10-01
+]
