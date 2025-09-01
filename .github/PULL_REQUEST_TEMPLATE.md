@@ -13,10 +13,13 @@
 <!-- Flags, inputs/outputs, breaking changes, migrations (if any) -->
 
 ## Checklist
-- [ ] Lint & hooks pass locally (`pre-commit run --all-files`)
-- [ ] Tests added/updated (if behavior changed)
+- [ ] Pre-commit hooks pass locally (`pre-commit run --all-files`)
+- [ ] Tests pass locally (`pytest`)
+- [ ] Coverage stays ≥ 80% (gate enforced in CI)
 - [ ] README/docs updated (if user-visible)
 - [ ] Safe by default (dry-run/backup where relevant)
 
-## Screens/Logs (optional)
-<!-- Paste images, logs, or CLI output -->
+## Signals & Links
+- Labels auto-applied: `area:*`, `size:*` (via workflows)
+- Codecov comment will post coverage diff on this PR
+<!-- Link related issues/PRs or paste screenshots/logs if helpful -->
