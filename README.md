@@ -25,6 +25,9 @@
   <a href="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/pages.yml">
     <img src="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/pages.yml/badge.svg?branch=main" alt="Pages" />
   </a>
+  <a href="https://github.com/zacharymplace/life-ops-scripts/issues?q=is%3Aissue+Stale+branches+report">
+    <img src="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/stale-branches-report.yml/badge.svg?branch=main" alt="Stale Branches Report" />
+  </a>
 </p>
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
