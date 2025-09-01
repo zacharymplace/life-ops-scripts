@@ -89,25 +89,29 @@ jobs:
             const newTitle = `${titlePrefix} — ${today}`;
             const body  = JSON.parse(process.env.REPORT_BODY);
 
-            // Find and close existing open stale branch reports
+            // Gather open report issues (weekly or dated)
             const openIssues = await github.paginate(github.rest.issues.listForRepo, {
               owner, repo, state: 'open', per_page: 100, labels: 'automation'
             });
             const priorReports = openIssues.filter(i => i.title.startsWith(titlePrefix));
 
+            // Create the new dated report first so we can link to it
+            const created = await github.rest.issues.create({
+              owner, repo, title: newTitle, body, labels: ["automation"]
+            });
+            const newUrl = created.data.html_url;
+            const newNum = created.data.number;
+
+            // Close older reports with a link to the new one
             for (const issue of priorReports) {
-              if (issue.title === newTitle) continue;
+              if (issue.number === newNum) continue;   // safety
               await github.rest.issues.createComment({
                 owner, repo, issue_number: issue.number,
-                body: `Superseded by **${newTitle}**. Closing this report.`
+                body: `Superseded by **[${newTitle}](${newUrl})**. Closing this report.`
               });
               await github.rest.issues.update({
                 owner, repo, issue_number: issue.number, state: 'closed'
               });
             }
 
-            // Create the new dated report
-            const created = await github.rest.issues.create({
-              owner, repo, title: newTitle, body, labels: ["automation"]
-            });
-            core.info(`Created issue #${created.data.number}`);
+            core.info(`Created issue #${newNum}: ${newUrl}`);
