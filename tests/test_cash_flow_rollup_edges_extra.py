@@ -1,16 +1,32 @@
-# tests/test_cash_flow_rollup_edges_extra.py
 import pandas as pd
-from scripts.python.finance.cash_flow_rollup import rollup, Txn
+from scripts.python.finance.cash_flow_rollup import rollup
 
-def test_rollup_empty_transactions():
-    """Rollup should return an empty DataFrame when given no transactions."""
-    df = rollup([])
-    assert isinstance(df, pd.DataFrame)
-    assert df.empty
+def test_rollup_monthly_branch():
+    df = pd.DataFrame({
+        "txn_date": pd.to_datetime(["2025-01-10", "2025-01-31", "2025-02-01"]),
+        "amount": [100.0, -40.0, 25.0],
+    })
+    out = rollup(
+        df,
+        freq="monthly",
+        date_col="txn_date",
+        amount_col="amount",
+        opening_cash=1000.0,
+    )
 
-def test_rollup_zero_amount_and_blank_code():
-    """Edge case: blank code or zero amount should not crash."""
-    txns = [Txn(date="2025-01-01", code="", amount=0.0)]
-    df = rollup(txns)
-    assert "code" in df.columns
-    assert "total" in df.columns
+    # Expect one row per month, labeled 'YYYY-MM'
+    assert list(out["label"]) == ["2025-01", "2025-02"]
+
+    jan = out.iloc[0]
+    feb = out.iloc[1]
+
+    # January net/inflow/outflow
+    assert jan["net"] == 60.0
+    assert jan["inflow"] == 100.0
+    assert jan["outflow"] == 40.0
+
+    # February net
+    assert feb["net"] == 25.0
+
+    # Cumulative cash: opening + cumsum(net)
+    assert feb["cumulative_cash"] == 1000.0 + 60.0 + 25.0
