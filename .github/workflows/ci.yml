@@ -188,6 +188,7 @@ jobs:
           files: ./coverage.xml
           flags: ubuntu-py${{ matrix.python-version }}
           fail_ci_if_error: false
+          verbose: true
 
       - name: Upload coverage artifact
         if: ${{ matrix.os == 'ubuntu-latest' && always() }}
