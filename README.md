@@ -1,6 +1,7 @@
 <h1 align="center">🌱 Life Ops Scripts</h1>
 
 <p align="center">
+  <!-- Workflows -->
   <a href="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/deploy.yml">
     <img src="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/deploy.yml/badge.svg?branch=main" alt="Deploy" />
   </a>
@@ -10,6 +11,14 @@
   <a href="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/link-check.yml">
     <img src="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/link-check.yml/badge.svg?branch=main" alt="Link Check" />
   </a>
+  <a href="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/pages.yml">
+    <img src="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/pages.yml/badge.svg?branch=main" alt="Pages" />
+  </a>
+  <a href="https://github.com/zacharymplace/life-ops-scripts/issues?q=is%3Aissue+Stale+branches+report">
+    <img src="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/stale-branches-report.yml/badge.svg?branch=main" alt="Stale Branches Report" />
+  </a>
+
+  <!-- Project Meta -->
   <a href="https://codecov.io/gh/zacharymplace/life-ops-scripts">
     <img src="https://codecov.io/gh/zacharymplace/life-ops-scripts/branch/main/graph/badge.svg" alt="Coverage" />
   </a>
@@ -21,12 +30,6 @@
   </a>
   <a href="LICENSE">
     <img src="https://img.shields.io/github/license/zacharymplace/life-ops-scripts" alt="License: MIT" />
-  </a>
-  <a href="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/pages.yml">
-    <img src="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/pages.yml/badge.svg?branch=main" alt="Pages" />
-  </a>
-  <a href="https://github.com/zacharymplace/life-ops-scripts/issues?q=is%3Aissue+Stale+branches+report">
-    <img src="https://github.com/zacharymplace/life-ops-scripts/actions/workflows/stale-branches-report.yml/badge.svg?branch=main" alt="Stale Branches Report" />
   </a>
 </p>
 
