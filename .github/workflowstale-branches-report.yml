@@ -1,0 +1,107 @@
+name: Stale Branches Report
+
+on:
+  schedule:
+    - cron: "12 14 * * 1"   # Mondays 14:12 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate report
+        id: gen
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo  = context.repo.repo;
+            const defaultBranch = (await github.rest.repos.get({ owner, repo })).data.default_branch;
+
+            // Helper: days between
+            const daysBetween = (a, b) => Math.floor((b - a) / 86400000);
+
+            // Get branches (first 200)
+            const branches = await github.paginate(github.rest.repos.listBranches, { owner, repo, per_page: 100 });
+
+            const now = new Date();
+            const inactiveCutoffDays = 60;   // no commits in N days → stale
+            const stale = [];
+
+            for (const br of branches) {
+              const name = br.name;
+              if (name === defaultBranch) continue;
+
+              // Last commit date
+              const sha = br.commit.sha;
+              const commit = (await github.rest.repos.getCommit({ owner, repo, ref: sha })).data;
+              const committed = new Date(commit.commit.committer.date);
+              const inactiveDays = daysBetween(committed, now);
+
+              // Find closed PRs from this branch; see if any were merged into default
+              const prs = await github.paginate(github.rest.pulls.list, {
+                owner, repo, state: 'closed', per_page: 50, head: `${owner}:${name}`
+              });
+
+              const mergedPR = prs.find(pr => pr.merged_at && pr.base.ref === defaultBranch);
+              const mergedAt = mergedPR ? new Date(mergedPR.merged_at) : null;
+
+              // Mark stale if merged, or inactive too long
+              if (mergedPR || inactiveDays >= inactiveCutoffDays) {
+                stale.push({
+                  name,
+                  lastCommit: committed.toISOString().slice(0,10),
+                  inactiveDays,
+                  merged: !!mergedPR,
+                  mergedAt: mergedAt ? mergedAt.toISOString().slice(0,10) : null,
+                  prNumber: mergedPR?.number ?? null
+                });
+              }
+            }
+
+            // Build markdown
+            let body = `## Stale Branches Report\n` +
+                       `Default branch: **${defaultBranch}**  \n` +
+                       `Generated: ${now.toISOString().slice(0,10)}\n\n`;
+
+            if (stale.length === 0) {
+              body += `No stale branches found 🎉\n`;
+            } else {
+              body += `| Branch | Status | Last Commit | Inactive (days) | PR | Delete |\n` +
+                      `|---|---|---:|---:|---|---|\n`;
+              for (const s of stale) {
+                const status = s.merged ? `**merged**${s.mergedAt ? ` (${s.mergedAt})` : ""}` : `inactive`;
+                const prLink = s.prNumber ? `#${s.prNumber}` : `–`;
+                const delURL = `https://github.com/${owner}/${repo}/branches/all?query=${encodeURIComponent(s.name)}`;
+                body += `| \`${s.name}\` | ${status} | ${s.lastCommit} | ${s.inactiveDays} | ${prLink} | [🗑️ delete](${delURL}) |\n`;
+              }
+            }
+
+            core.setOutput('body', body);
+
+      - name: Open or update issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo  = context.repo.repo;
+            const title = "Stale branches report (weekly)";
+            const body  = `${{ steps.gen.outputs.body }}`;
+
+            // Find existing open issue with same title
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
+              owner, repo, state: 'open', per_page: 50
+            });
+            const existing = issues.find(i => i.title === title);
+
+            if (existing) {
+              await github.rest.issues.update({ owner, repo, issue_number: existing.number, body });
+              core.info(`Updated issue #${existing.number}`);
+            } else {
+              const created = await github.rest.issues.create({ owner, repo, title, body, labels: ["automation"] });
+              core.info(`Created issue #${created.data.number}`);
+            }
