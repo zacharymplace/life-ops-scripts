@@ -1,0 +1,58 @@
+name: pip-audit
+
+on:
+  schedule:
+    - cron: '23 14 * * 1'   # Mondays 14:23 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write   # for SARIF upload
+  actions: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements-dev.txt
+            pyproject.toml
+
+      - name: Install project deps (best-effort)
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+          # if you publish a package / have pyproject:
+          if [ -f pyproject.toml ]; then pip install -e .; fi
+
+      - name: Install pip-audit
+        run: pip install pip-audit
+
+      - name: Audit dependencies → SARIF
+        # --strict makes the job fail on any vulnerability (good default)
+        # remove --strict if you prefer report-only
+        run: |
+          set -euo pipefail
+          pip-audit -r requirements.txt -f sarif -o pip-audit.sarif --strict || FAILED=$?
+          # Also audit the current environment (captures transitive/extra deps)
+          pip-audit -f sarif -o pip-audit-env.sarif || true
+          # Merge SARIFs (simple concat fallback)
+          jq -s '{version:"2.1.0", runs:(.[0].runs + .[1].runs)}' pip-audit.sarif pip-audit-env.sarif > pip-audit-merged.sarif || cp pip-audit.sarif pip-audit-merged.sarif
+          [ -z "${FAILED:-}" ] || exit $FAILED
+        shell: bash
+
+      - name: Upload SARIF to Code Scanning
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: pip-audit-merged.sarif
