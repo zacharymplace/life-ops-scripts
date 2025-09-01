@@ -14,16 +14,14 @@
 
 ## Checklist
 - [ ] Pre-commit hooks pass locally (`pre-commit run --all-files`)
-- [ ] Tests pass locally (`pytest`)
-- [ ] Coverage stays ≥ 80% (gate enforced in CI)
+- [ ] Tests added/updated (if behavior changed)
+- [ ] Coverage stays ≥ 80% (CI gate)
 - [ ] README/docs updated (if user-visible)
 - [ ] Safe by default (dry-run/backup where relevant)
 
-- [ ] Breaking change?  
-  - [ ] YES → Document migration path in **Details**  
+- [ ] Breaking change?
+  - [ ] YES → Document migration path in **Details** and ensure it’s copied into the **Release Checklist** Breaking Changes section
   - [ ] NO
 
-## Signals & Links
-- Labels auto-applied: `area:*`, `size:*` (via workflows)
-- Codecov comment will post coverage diff on this PR
-<!-- Link related issues/PRs or paste screenshots/logs if helpful -->
+## Screens/Logs (optional)
+<!-- Paste images, logs, or CLI output -->
