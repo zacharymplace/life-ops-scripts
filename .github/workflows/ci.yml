@@ -35,9 +35,9 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
           pip install pytest
-          # Ubuntu: extra tools
+          # Ubuntu-only extras (lint, format, coverage)
           if [ "${{ matrix.os }}" = "ubuntu-latest" ]; then
-            pip install pre-commit pytest-cov black codecov
+            pip install pre-commit pytest-cov black codecov ruff
           fi
           # Only install package if pyproject exists
           if [ -f pyproject.toml ]; then
@@ -99,7 +99,7 @@ jobs:
             exit 1
           fi
 
-          # Validate output (heredoc terminator must be unindented)
+          # Validate output
           python - <<'PY'
           import pyarrow.parquet as pq
           t = pq.read_table("out/test.parquet")
@@ -107,7 +107,17 @@ jobs:
           print("csv2pq smoke OK: rows=", t.num_rows, "cols=", len(t.schema))
           PY
 
-      # ---- Ubuntu-only fixers/lint ----
+      - name: pqinfo smoke (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
+        run: pqinfo out/test.parquet --head 2
+
+      # ---- Ubuntu-only lint/format ----
+      - name: Lint (ruff, no fixes)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          ruff --version
+          ruff check . --output-format=github
+
       - name: Format (black)
         if: matrix.os == 'ubuntu-latest'
         shell: bash
@@ -125,10 +135,10 @@ jobs:
           pre-commit run trailing-whitespace --all-files || true
           pre-commit run end-of-file-fixer --all-files || true
 
-      - name: Lint (pre-commit, skip fixers)
+      - name: Lint (pre-commit, skip fixers & ruff)
         if: matrix.os == 'ubuntu-latest'
         shell: bash
-        run: SKIP=black,doctoc,trailing-whitespace,end-of-file-fixer pre-commit run --all-files
+        run: SKIP=ruff,black,doctoc,trailing-whitespace,end-of-file-fixer pre-commit run --all-files
 
       # ---- Tests ----
       - name: Tests with coverage (Ubuntu)
@@ -159,7 +169,7 @@ jobs:
 
       # ---- Coverage upload ----
       - name: Ensure coverage file exists
-        if: matrix.os == 'ubuntu-latest' && always()
+        if: ${{ matrix.os == 'ubuntu-latest' && always() }}
         shell: bash
         run: |
           if [ ! -f coverage.xml ]; then
@@ -176,7 +186,7 @@ jobs:
           fail_ci_if_error: false
 
       - name: Upload coverage artifact
-        if: matrix.os == 'ubuntu-latest' && always()
+        if: ${{ matrix.os == 'ubuntu-latest' && always() }}
         uses: actions/upload-artifact@v4
         with:
           name: coverage-ubuntu-py${{ matrix.python-version }}

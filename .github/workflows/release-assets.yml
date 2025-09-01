@@ -1,0 +1,54 @@
+name: Release Assets
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  package-and-upload:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps (if needed)
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Build release outputs
+        run: |
+          chmod +x ./deploy.sh || true
+          ./deploy.sh || true
+          mkdir -p out
+          ls -la out
+
+      - name: Create ZIP and checksum
+        run: |
+          set -e
+          mkdir -p out
+          zip -j "out/life-ops-scripts-${{ github.ref_name }}.zip" out/* || true
+          if [ ! -f "out/life-ops-scripts-${{ github.ref_name }}.zip" ]; then
+            echo "No files in out/; creating placeholder zip"
+            zip -j "out/life-ops-scripts-${{ github.ref_name }}.zip" LICENSE || true
+          fi
+          sha256sum "out/life-ops-scripts-${{ github.ref_name }}.zip" > "out/life-ops-scripts-${{ github.ref_name }}.zip.sha256"
+          ls -la out
+
+      - name: Upload to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          files: |
+            out/life-ops-scripts-${{ github.ref_name }}.zip
+            out/life-ops-scripts-${{ github.ref_name }}.zip.sha256
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
