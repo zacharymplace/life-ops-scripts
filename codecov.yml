@@ -1,0 +1,18 @@
+codecov:
+  require_ci_to_pass: false
+
+comment:
+  layout: "reach, diff, flags, files"
+  behavior: default         # new comment per push
+  require_changes: false    # comment even if no coverage change
+
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 1%       # allow small drift without failing
+    patch:
+      default:
+        target: 80%
+        threshold: 0%       # be strict on changed lines
