@@ -18,7 +18,6 @@ jobs:
       cancel-in-progress: true
 
     env:
-      # Prefer PAT; fall back to GITHUB_TOKEN so the workflow still runs
       GH_TOKEN: ${{ secrets.BOWTIE_PAT || github.token }}
 
     steps:
@@ -33,7 +32,9 @@ jobs:
           gh label create bowtie     --description "Bowtie automation"  --color "5319e7" || true
 
       - name: Heartbeat (guaranteed change)
-        run: echo "last-run: $(date -u +'%Y-%m-%dT%H:%M:%SZ')" > .bowtie_heartbeat.txt
+        shell: bash
+        run: |
+          echo "last-run: $(date -u +'%Y-%m-%dT%H:%M:%SZ')" > .bowtie_heartbeat.txt
 
       - name: Create or update PR
         id: cpr
@@ -52,11 +53,11 @@ jobs:
           delete-branch: true
 
       - name: Log PR result
+        shell: bash
         run: |
           echo "PR number: ${{ steps.cpr.outputs['pull-request-number'] }}"
           echo "PR url:    ${{ steps.cpr.outputs['pull-request-url'] }}"
 
-      # Only try auto-merge if a PR exists (and PAT has perms)
       - name: Auto-merge (squash) when eligible
         if: ${{ steps.cpr.outputs['pull-request-number'] != '' && secrets.BOWTIE_PAT != '' }}
         run: gh pr merge ${{ steps.cpr.outputs['pull-request-number'] }} --squash --auto
