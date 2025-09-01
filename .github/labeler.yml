@@ -2,62 +2,62 @@
 # Order matters: specific paths first, then broader globs.
 
 # ---- Core library (src/)
-src/life_ops_scripts/**:
+"src/life_ops_scripts/**":
   - area:lib
 
 # ---- Finance scripts (your main code under test)
-scripts/python/finance/**:
+"scripts/python/finance/**":
   - area:finance
 
 # ---- Tests
-tests/**:
+"tests/**":
   - area:tests
 
 # ---- Docs
-docs/**:
+"docs/**":
   - area:docs
-docs/examples/**:
+"docs/examples/**":
   - type:examples
-sample/**:
+"sample/**":
   - type:examples
-data/**:
+"data/**":
   - type:examples
 
 # ---- CI / workflows / repo automation
-.github/workflows/**:
+".github/workflows/**":
   - area:ci
   - type:workflow
-.github/**:
+".github/**":
   - area:ci
 
 # ---- All other scripts (fallback after finance-specific)
-scripts/**:
+"scripts/**":
   - area:scripts
 
 # ---- Release & security meta
-CHANGELOG.md:
+"CHANGELOG.md":
   - release
-SECURITY.md:
+"SECURITY.md":
   - security
 
 # ---- Repo hygiene / chores
-.pre-commit-config.yaml:
+".pre-commit-config.yaml":
   - chore
-.editorconfig:
+".editorconfig":
   - chore
-.gitattributes:
+".gitattributes":
   - chore
-.gitignore:
+".gitignore":
   - chore
-Makefile:
+"Makefile":
   - chore
-deploy.sh:
+"deploy.sh":
   - chore
 
-# ---- General content types (optional quality-of-life)
-*.md:
+# ---- General content types
+"*.md":
   - docs
-*.yml:
+"*.yml":
   - chore
-*.yaml:
+"*.yaml":
   - chore
