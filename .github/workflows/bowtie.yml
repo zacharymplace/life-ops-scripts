@@ -18,7 +18,8 @@ jobs:
       cancel-in-progress: true
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -27,8 +28,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.BOWTIE_PAT }}
         run: |
-          gh label create automation -d "Automated change" -c "#0366d6" || true
-          gh label create bowtie     -d "Bowtie automation" -c "#5319e7" || true
+          gh label create automation --description "Automated change" --color "0366d6" || true
+          gh label create bowtie     --description "Bowtie automation"  --color "5319e7" || true
 
       - name: Heartbeat (guaranteed change)
         shell: bash
@@ -43,16 +44,16 @@ jobs:
           base: main
           title: "bowtie: automated update"
           commit-message: "bowtie: update heartbeat"
-          body: "Automated change produced by Bowtie workflow."
-          labels: |
-            automation
-            bowtie
-          add-paths: .bowtie_heartbeat.txt
+          body: |
+            Automated change produced by Bowtie workflow.
+          labels: automation,bowtie
+          add-paths: |
+            .bowtie_heartbeat.txt
           delete-branch: true
 
       # Queue auto-merge (respects branch protection; waits for checks)
       - name: Auto-merge (squash) when eligible
-        if: steps.cpr.outputs.pull-request-number != ''
+        if: ${{ steps.cpr.outputs['pull-request-number'] != '' }}
         env:
           GH_TOKEN: ${{ secrets.BOWTIE_PAT }}
         run: gh pr merge ${{ steps.cpr.outputs['pull-request-number'] }} --squash --auto
