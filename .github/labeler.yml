@@ -1,0 +1,11 @@
+# Label PRs automatically based on changed file paths
+scripts/python/finance/**:
+  - area:finance
+scripts/**:
+  - area:scripts
+docs/**:
+  - area:docs
+.github/**:
+  - area:ci
+tests/**:
+  - area:tests
