@@ -1,5 +1,4 @@
 [run]
-# Only measure code we care about right now
 source =
     scripts/python/finance
     life_ops_scripts
