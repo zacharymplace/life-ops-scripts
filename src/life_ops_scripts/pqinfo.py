@@ -129,7 +129,7 @@ def main(path: Path, as_json: bool, summary: bool, head: int, columns: Optional[
             cols = [c.strip() for c in columns.split(",") if c.strip()]
         table = pq.read_table(str(path), columns=cols)
         try:
-            import pandas as pd  # pandas is already a dependency
+            import pandas as pd  # noqa: F401
             df = table.to_pandas().head(head)
             click.echo()
             click.echo(df.to_string(index=False))
