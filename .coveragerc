@@ -1,7 +1,7 @@
 [run]
 source =
     scripts/python/finance
-    life_ops_scripts
+    src/life_ops_scripts
 omit =
     */__init__.py
     scripts/generate_examples.py
