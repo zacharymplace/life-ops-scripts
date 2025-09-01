@@ -46,7 +46,7 @@ jobs:
             echo "No pyproject.toml; skipping editable install."
           fi
 
-      # ---- csv2pq smoke test (Ubuntu-only) ----
+      # ---- csv2pq smoke (Ubuntu-only) ----
       - name: csv2pq smoke (Ubuntu)
         if: matrix.os == 'ubuntu-latest'
         shell: bash
@@ -148,7 +148,8 @@ jobs:
           pytest -q --disable-warnings \
             --cov=scripts --cov=life_ops_scripts \
             --cov-report=xml:coverage.xml \
-            --cov-report=term-missing
+            --cov-report=term-missing \
+            --cov-fail-under=80
 
       - name: Tests (Windows)
         if: matrix.os == 'windows-latest'
