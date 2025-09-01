@@ -47,3 +47,6 @@ out/*.csv
 *.parquet
 out/
 .coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
