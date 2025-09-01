@@ -14,6 +14,10 @@ assignees: zacharymplace
 - [ ] Verify `deploy.sh` packages expected files
 - [ ] (Optional) Update README usage if behavior changed
 
+## Breaking Changes
+<!-- Copy any PRs/issues flagged as breaking change here -->
+- [ ] None
+
 ## Tag & Release
 - [ ] Create tag: `git tag vX.Y.Z && git push origin vX.Y.Z` (or use GitHub “Draft a new release”)
 - [ ] Confirm Actions attached artifacts to the Release
