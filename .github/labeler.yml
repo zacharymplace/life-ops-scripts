@@ -1,11 +1,63 @@
 # Label PRs automatically based on changed file paths
+# Order matters: specific paths first, then broader globs.
+
+# ---- Core library (src/)
+src/life_ops_scripts/**:
+  - area:lib
+
+# ---- Finance scripts (your main code under test)
 scripts/python/finance/**:
   - area:finance
-scripts/**:
-  - area:scripts
-docs/**:
-  - area:docs
-.github/**:
-  - area:ci
+
+# ---- Tests
 tests/**:
   - area:tests
+
+# ---- Docs
+docs/**:
+  - area:docs
+docs/examples/**:
+  - type:examples
+sample/**:
+  - type:examples
+data/**:
+  - type:examples
+
+# ---- CI / workflows / repo automation
+.github/workflows/**:
+  - area:ci
+  - type:workflow
+.github/**:
+  - area:ci
+
+# ---- All other scripts (fallback after finance-specific)
+scripts/**:
+  - area:scripts
+
+# ---- Release & security meta
+CHANGELOG.md:
+  - release
+SECURITY.md:
+  - security
+
+# ---- Repo hygiene / chores
+.pre-commit-config.yaml:
+  - chore
+.editorconfig:
+  - chore
+.gitattributes:
+  - chore
+.gitignore:
+  - chore
+Makefile:
+  - chore
+deploy.sh:
+  - chore
+
+# ---- General content types (optional quality-of-life)
+*.md:
+  - docs
+*.yml:
+  - chore
+*.yaml:
+  - chore
