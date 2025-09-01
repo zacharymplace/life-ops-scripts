@@ -46,3 +46,4 @@ out/*.csv
 !examples/**/*.csv
 *.parquet
 out/
+.coverage
