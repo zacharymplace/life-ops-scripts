@@ -1,0 +1,12 @@
+[run]
+omit =
+  */__init__.py
+  scripts/generate_examples.py
+  scripts/index_patches.py
+  scripts/python/smart_home_log_parser.py
+  scripts/python/tiller_cleaner.py
+
+[report]
+exclude_lines =
+  pragma: no cover
+  if __name__ == .__main__.:
