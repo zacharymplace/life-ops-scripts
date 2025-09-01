@@ -17,8 +17,8 @@ jobs:
       group: bowtie
       cancel-in-progress: true
 
-    # Prefer PAT; fall back to GITHUB_TOKEN so the workflow still runs
     env:
+      # Prefer PAT; fall back to GITHUB_TOKEN so the workflow still runs
       GH_TOKEN: ${{ secrets.BOWTIE_PAT || github.token }}
 
     steps:
