@@ -138,7 +138,7 @@ def main(
                     parts.append(f"max={s['max']}")
                 click.echo(f"  - {s['name']}: " + " ".join(parts))
 
-    ifif head > 0:
+    if head > 0:
         cols = None
         if columns:
             cols = [c.strip() for c in columns.split(",") if c.strip()]
