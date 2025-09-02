@@ -1,54 +1,53 @@
-# Label PRs automatically based on changed file paths
-# Order matters: specific paths first, then broader globs.
+# actions/labeler@v5 schema — rule array form
 
-"src/life_ops_scripts/**":
-  - area:lib
+- label: "area:lib"
+  changed-files:
+    - any-glob-to-any-file: ["src/life_ops_scripts/**"]
 
-"scripts/python/finance/**":
-  - area:finance
+- label: "area:finance"
+  changed-files:
+    - any-glob-to-any-file: ["scripts/python/finance/**"]
 
-"tests/**":
-  - area:tests
+- label: "area:tests"
+  changed-files:
+    - any-glob-to-any-file: ["tests/**"]
 
-"docs/**":
-  - area:docs
-"docs/examples/**":
-  - type:examples
-"sample/**":
-  - type:examples
-"data/**":
-  - type:examples
+- label: "area:docs"
+  changed-files:
+    - any-glob-to-any-file: ["docs/**", "*.md"]
 
-".github/workflows/**":
-  - area:ci
-  - type:workflow
-".github/**":
-  - area:ci
+- label: "type:examples"
+  changed-files:
+    - any-glob-to-any-file: ["docs/examples/**", "sample/**", "data/**"]
 
-"scripts/**":
-  - area:scripts
+- labels: ["area:ci", "type:workflow"]
+  changed-files:
+    - any-glob-to-any-file: [".github/workflows/**"]
 
-"CHANGELOG.md":
-  - release
-"SECURITY.md":
-  - security
+- label: "area:ci"
+  changed-files:
+    - any-glob-to-any-file: [".github/**"]
 
-".pre-commit-config.yaml":
-  - chore
-".editorconfig":
-  - chore
-".gitattributes":
-  - chore
-".gitignore":
-  - chore
-"Makefile":
-  - chore
-"deploy.sh":
-  - chore
+- label: "area:scripts"
+  changed-files:
+    - any-glob-to-any-file: ["scripts/**"]
 
-"*.md":
-  - docs
-"*.yml":
-  - chore
-"*.yaml":
-  - chore
+- label: "release"
+  changed-files:
+    - any-glob-to-any-file: ["CHANGELOG.md"]
+
+- label: "security"
+  changed-files:
+    - any-glob-to-any-file: ["SECURITY.md"]
+
+- label: "chore"
+  changed-files:
+    - any-glob-to-any-file:
+        - ".pre-commit-config.yaml"
+        - ".editorconfig"
+        - ".gitattributes"
+        - ".gitignore"
+        - "Makefile"
+        - "deploy.sh"
+        - "*.yml"
+        - "*.yaml"
