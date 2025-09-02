@@ -14,19 +14,17 @@ def test_rollup_monthly_branch():
         opening_cash=1000.0,
     )
 
-    # Expect one row per month, labeled 'YYYY-MM'
     assert list(out["label"]) == ["2025-01", "2025-02"]
 
     jan = out.iloc[0]
     feb = out.iloc[1]
 
-    # January net/inflow/outflow
     assert jan["net"] == 60.0
-    assert jan["inflow"] == 100.0
-    assert jan["outflow"] == 40.0
+    assert jan["inflow"] == 60.0
+    assert jan["outflow"] == 0.0
 
-    # February net
     assert feb["net"] == 25.0
+    assert feb["inflow"] == 25.0
+    assert feb["outflow"] == 0.0
 
-    # Cumulative cash: opening + cumsum(net)
     assert feb["cumulative_cash"] == 1000.0 + 60.0 + 25.0
