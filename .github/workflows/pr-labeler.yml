@@ -3,6 +3,7 @@ name: PR Labeler
 on:
   pull_request_target:    # labels PRs from forks too (uses read-only diff)
     types: [opened, synchronize, reopened]
+  workflow_dispatch:
 
 permissions:
   contents: read
