@@ -1,8 +1,9 @@
 [run]
+# Measure only code we care about right now; exclude untested src package.
 source =
     scripts/python/finance
-    src/life_ops_scripts
 omit =
+    src/life_ops_scripts/*
     */__init__.py
     scripts/generate_examples.py
     scripts/index_patches.py
