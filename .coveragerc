@@ -1,4 +1,5 @@
 [run]
+# Measure only code we care about right now; exclude untested src package.
 source =
     scripts/python/finance
 omit =

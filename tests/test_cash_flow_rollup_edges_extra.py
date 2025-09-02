@@ -21,6 +21,13 @@ def test_rollup_monthly_branch():
 
     jan = out.iloc[0]
     feb = out.iloc[1]
-    assert jan["net"] == 60.0 and jan["inflow"] == 60.0 and jan["outflow"] == 0.0
-    assert feb["net"] == 25.0 and feb["inflow"] == 25.0 and feb["outflow"] == 0.0
+
+    assert jan["net"] == 60.0
+    assert jan["inflow"] == 60.0
+    assert jan["outflow"] == 0.0
+
+    assert feb["net"] == 25.0
+    assert feb["inflow"] == 25.0
+    assert feb["outflow"] == 0.0
+
     assert feb["cumulative_cash"] == 1000.0 + 60.0 + 25.0
