@@ -154,7 +154,7 @@ jobs:
           if [ -f .coveragerc ]; then export COVERAGE_RCFILE=.coveragerc; fi
           if [ -f .coveragrc ]; then export COVERAGE_RCFILE=.coveragrc; fi
           pytest -q --disable-warnings \
-            --cov=scripts --cov=life_ops_scripts \
+            --cov \
             --cov-report=xml:coverage.xml \
             --cov-report=term-missing \
             --cov-fail-under=80
