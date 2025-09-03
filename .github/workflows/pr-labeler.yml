@@ -1,9 +1,8 @@
 name: PR Labeler
-
 on:
   pull_request_target:
     types: [opened, synchronize, reopened]
-  workflow_dispatch:  # optional: Run workflow button
+  workflow_dispatch:  # optional: gives you "Run workflow" in Actions
 
 permissions:
   contents: read
@@ -13,14 +12,13 @@ jobs:
   label:
     runs-on: ubuntu-latest
     steps:
+      # Optional: debug which config is being fetched from main
       - name: Debug labeler config (from default branch)
         run: |
           echo "Default branch: ${{ github.event.repository.default_branch }}"
           url="https://raw.githubusercontent.com/${{ github.repository }}/${{ github.event.repository.default_branch }}/.github/labeler.yml"
           echo "Fetching: $url"
-          echo "---- BEGIN labeler.yml ----"
-          curl -sSL "$url" | sed -n '1,160p'
-          echo "---- END labeler.yml ----"
+          curl -sSL "$url" | sed -n '1,200p'
 
       - name: PR Labeler
         uses: actions/labeler@v5
