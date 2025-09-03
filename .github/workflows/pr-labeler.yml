@@ -1,9 +1,9 @@
 name: PR Labeler
 
 on:
-  pull_request_target:    # labels PRs from forks too (uses read-only diff)
+  pull_request_target:
     types: [opened, synchronize, reopened]
-  workflow_dispatch:
+  workflow_dispatch:  # optional: Run workflow button
 
 permissions:
   contents: read
@@ -13,7 +13,17 @@ jobs:
   label:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/labeler@v5
+      - name: Debug labeler config (from default branch)
+        run: |
+          echo "Default branch: ${{ github.event.repository.default_branch }}"
+          url="https://raw.githubusercontent.com/${{ github.repository }}/${{ github.event.repository.default_branch }}/.github/labeler.yml"
+          echo "Fetching: $url"
+          echo "---- BEGIN labeler.yml ----"
+          curl -sSL "$url" | sed -n '1,160p'
+          echo "---- END labeler.yml ----"
+
+      - name: PR Labeler
+        uses: actions/labeler@v5
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           configuration-path: .github/labeler.yml
