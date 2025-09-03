@@ -1,53 +1,55 @@
-# actions/labeler@v5 schema — rule array form
+# actions/labeler@v5 — rule array with simple "files" lists
 
 - label: "area:lib"
-  changed-files:
-    - any-glob-to-any-file: ["src/life_ops_scripts/**"]
+  files:
+    - "src/life_ops_scripts/**"
 
 - label: "area:finance"
-  changed-files:
-    - any-glob-to-any-file: ["scripts/python/finance/**"]
+  files:
+    - "scripts/python/finance/**"
 
 - label: "area:tests"
-  changed-files:
-    - any-glob-to-any-file: ["tests/**"]
+  files:
+    - "tests/**"
 
 - label: "area:docs"
-  changed-files:
-    - any-glob-to-any-file: ["docs/**", "*.md"]
+  files:
+    - "docs/**"
+    - "*.md"
 
 - label: "type:examples"
-  changed-files:
-    - any-glob-to-any-file: ["docs/examples/**", "sample/**", "data/**"]
+  files:
+    - "docs/examples/**"
+    - "sample/**"
+    - "data/**"
 
 - labels: ["area:ci", "type:workflow"]
-  changed-files:
-    - any-glob-to-any-file: [".github/workflows/**"]
+  files:
+    - ".github/workflows/**"
 
 - label: "area:ci"
-  changed-files:
-    - any-glob-to-any-file: [".github/**"]
+  files:
+    - ".github/**"
 
 - label: "area:scripts"
-  changed-files:
-    - any-glob-to-any-file: ["scripts/**"]
+  files:
+    - "scripts/**"
 
 - label: "release"
-  changed-files:
-    - any-glob-to-any-file: ["CHANGELOG.md"]
+  files:
+    - "CHANGELOG.md"
 
 - label: "security"
-  changed-files:
-    - any-glob-to-any-file: ["SECURITY.md"]
+  files:
+    - "SECURITY.md"
 
 - label: "chore"
-  changed-files:
-    - any-glob-to-any-file:
-        - ".pre-commit-config.yaml"
-        - ".editorconfig"
-        - ".gitattributes"
-        - ".gitignore"
-        - "Makefile"
-        - "deploy.sh"
-        - "*.yml"
-        - "*.yaml"
+  files:
+    - ".pre-commit-config.yaml"
+    - ".editorconfig"
+    - ".gitattributes"
+    - ".gitignore"
+    - "Makefile"
+    - "deploy.sh"
+    - "*.yml"
+    - "*.yaml"
