@@ -1,6 +1,7 @@
 import pandas as pd
 from scripts.python.finance.cash_flow_rollup import rollup
 
+
 def test_rollup_monthly_branch():
     df = pd.DataFrame({
         "txn_date": pd.to_datetime(["2025-01-10", "2025-01-31", "2025-02-01"]),
@@ -28,3 +29,4 @@ def test_rollup_monthly_branch():
     assert feb["outflow"] == 0.0
 
     assert feb["cumulative_cash"] == 1000.0 + 60.0 + 25.0
+
